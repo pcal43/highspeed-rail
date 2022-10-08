@@ -1,6 +1,6 @@
 # High-Speed Rail
 
-Do you think Ice Boats are dumb?  Do you wish minecarts were a viable form of transportation?  Then this is the mod for you!
+Do you think Ice Boats are stupid?  Do you wish minecarts were a viable form of transportation?  Then this is the mod for you!
 
 Just build your rails on gravel blocks and your minecarts will go the same speed as ice boats.
 
