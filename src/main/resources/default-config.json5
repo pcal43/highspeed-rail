@@ -1,0 +1,28 @@
+{
+
+
+  //
+  // List of blocks and how they affect a train travelling on top.  cartSpeed is in blocks-per-second.
+  //
+  'blocks' : [
+    {
+        'blockId': 'minecraft:gravel',
+        'cartSpeed': 40
+    }
+  ],
+
+  // Whether a speedometer should be displayed when you get in a minecart.
+  //
+  // The mod must be installed on the client for this to work.
+  'isSpeedometerEnabled'     : true,
+
+  // Whether the 'true' speed should also be displayed on the speedometer.  The deafult speedometer just shows your
+  // approximate speed; this precisely measures distance travelled every tick.  It's more resource-intensive
+  // and also flickers sort of annoyingly, so disabled by default.  There's usually not much difference, anyway.
+  'isTrueSpeedometerEnabled' : false,
+
+  // Whether Vanilla ice boats should be allowed.  Set to 'false' to limit ice boats to ground speed; 'true'
+  //
+  // The mod must be installed on the client for this to work.
+  'isIceBoatsEnabled'        : false
+}
