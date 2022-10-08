@@ -4,8 +4,7 @@ Do you think Ice Boats are dumb?  Do you wish minecarts were a viable form of tr
 
 Just build your rails on gravel blocks and your minecarts will go the same speed as ice boats.
 
-<img src="https://cdn.modrinth.com/data/d7PCSOkD/images/14df124bb68fcc72594f675f27c6f39dba23ca59.png" width="320" />
-
+![](https://github.com/pcal43/highspeed-rail/blob/main/etc/screenshot-40bps-small.png?raw=true)
 
 ## Features
 
