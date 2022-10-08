@@ -13,11 +13,8 @@ Just build your rails on gravel blocks and your minecarts will go the same speed
 * **No derailing.** Minecarts automatically reduce to normal speed on curves.
 * **Serverside-only.**  Clients do not need to install the mod.
 * **Vanilla-friendly.**  Does not add new blocks to your world.
-
-## Bonus Features
-
-* Minecart speedometer
-* Nerf for ice boats (boats on ice move the same as on land)
+* Optional minecart speedometer
+* Optional nerf for ice boats (boats on ice move the same as on land)
 
 
 ## Notes
