@@ -64,7 +64,7 @@ modrinth {
 	token = System.getenv("MODRINTH_TOKEN")
 	projectId = "d7PCSOkD"
 	versionNumber = project.mod_version
-	versionType = "alpha"
+	versionType = "release"
 	uploadFile = remapJar
 	changelog = "<p><a href='https://github.com/pcal43/highspeed-rail/releases/tag/${project.mod_version}'>https://github.com/pcal43/highspeed-rail/releases/tag/${project.mod_version}</a></p>"
 	gameVersions = ["1.19.2"]
@@ -80,11 +80,10 @@ curseforge {
 
 	project {
 		id = "576896"
-		releaseType = "release"
 		changelog = "https://github.com/pcal43/highspeed-rail/releases/tag/${project.mod_version}"
 		changelogType = "markdown"
 		mod_version = project.mod_version
-		releaseType = "beta"
+		releaseType = "release"
 		addGameVersion ((String) project.minecraft_version)
 		addGameVersion "Fabric"
 		mainArtifact(remapJar)
