@@ -6,12 +6,12 @@ import net.minecraft.block.enums.RailShape;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.pcal.highspeed.HighspeedService;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -72,7 +72,7 @@ public abstract class AbstractMinecartEntityMixin {
                 return maxSpeed = VANILLA_MAX_SPEED;
             } else {
                 final BlockState underState = minecart.world.getBlockState(currentPos.down());
-                final Identifier underBlockId = Registry.BLOCK.getId(underState.getBlock());
+                final Identifier underBlockId = Registries.BLOCK.getId(underState.getBlock());
                 final Integer cartSpeedBps = HighspeedService.getInstance().getCartSpeed(underBlockId);
                 if (cartSpeedBps != null) {
                     return maxSpeed = cartSpeedBps / 20.0;
