@@ -32,3 +32,14 @@ Just build your rails on gravel blocks and your minecarts will go the same speed
 * And also [Gravel Carts](https://modrinth.com/mod/gravel_carts) which is great mod that implements the same idea a bit differently
 * Idea for disabling ice boats borrowed from [Ice Boat Nerf](https://www.curseforge.com/minecraft/mc-mods/ice-boat-nerf)
 * Idea for speedometer borrowed from [Speedometer](https://www.curseforge.com/minecraft/mc-mods/speedometer)
+
+
+## Legal
+
+This mod is published under the [MIT License](LICENSE).
+
+You're free to include this mod in your modpack provided you attribute it to pcal.net.
+
+## Discord
+
+https://discord.gg/jUP5nSPrjx
