@@ -15,9 +15,7 @@
   "environment": "*",
   "entrypoints": {
     "main": ["net.pcal.highspeed.HighspeedService"],
-    "client": [
-      "net.pcal.highspeed.HighspeedClientService"
-    ]
+    "client": ["net.pcal.highspeed.HighspeedClientService"]
   },
   "mixins": [
     "highspeed-mixin.json"
