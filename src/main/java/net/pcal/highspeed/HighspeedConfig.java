@@ -5,7 +5,7 @@ import net.minecraft.util.Identifier;
 import java.util.List;
 
 public record HighspeedConfig(
-        List<HighspeedBlockConfig> blockCOnfigs,
+        List<HighspeedBlockConfig> blockConfigs,
         boolean isSpeedometerEnabled,
         boolean isTrueSpeedometerEnabled,
         boolean isIceBoatsEnabled

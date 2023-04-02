@@ -3,15 +3,13 @@ package net.pcal.highspeed.mixins;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.RailShape;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.pcal.highspeed.HighspeedClientService;
 import net.pcal.highspeed.HighspeedService;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -96,11 +94,12 @@ public abstract class AbstractMinecartEntityMixin {
     }
 
     private void updateSpeedometer() {
-        if (!HighspeedService.getInstance().isSpeedometerEnabled()) return;
+        final HighspeedService service = HighspeedService.getInstance();
+        if (!service.isSpeedometerEnabled()) return;
         final AbstractMinecartEntity minecart = (AbstractMinecartEntity) (Object) this;
         if (!minecart.world.isClient) return;
-        final ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null || player.getVehicle() != minecart) return;
+        final HighspeedClientService client = service.getClientService();
+        if (!client.isPlayerRiding(minecart)) return;
         final double override = getModifiedMaxSpeed();
         final Vec3d vel = minecart.getVelocity();
         final Vec3d nominalVelocity = new Vec3d(MathHelper.clamp(vel.x, -override, override), 0.0, MathHelper.clamp(vel.z, -override, override));
@@ -112,11 +111,11 @@ public abstract class AbstractMinecartEntityMixin {
             final double trueSpeed;
             if (this.lastSpeedPos == null) {
                 trueSpeed = 0.0;
-                lastSpeedPos = player.getPos();
+                lastSpeedPos = client.getPlayerPos();
                 lastSpeedTime = System.currentTimeMillis();
             } else {
                 final long now = System.currentTimeMillis();
-                final Vec3d playerPos = player.getPos();
+                final Vec3d playerPos = client.getPlayerPos();
                 final Vec3d vector = playerPos.subtract(this.lastSpeedPos);
                 trueSpeed = vector.horizontalLength() * 1000 / ((now - lastSpeedTime));
                 this.lastSpeedPos = playerPos;
@@ -124,7 +123,7 @@ public abstract class AbstractMinecartEntityMixin {
             }
             display = String.format("| %.2f bps %.2f  |", nominalSpeed, trueSpeed);
         }
-        player.sendMessage(Text.literal(display), true);
+        client.sendPlayerMessage(display);
     }
 }
 

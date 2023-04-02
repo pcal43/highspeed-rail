@@ -2,8 +2,6 @@ package net.pcal.highspeed;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +19,7 @@ public class HighspeedService implements ModInitializer {
 
     private static HighspeedService INSTANCE = null;
     private HighspeedConfig config;
+    private HighspeedClientService clientService;
 
     public static HighspeedService getInstance() {
         return requireNonNull(INSTANCE);
@@ -29,16 +28,9 @@ public class HighspeedService implements ModInitializer {
     // ===================================================================================
     // Constants
 
-    public static final String LOGGER_NAME = "HighSpeedRail";
-
     private static final String CONFIG_RESOURCE_NAME = "default-config.json5";
     private static final String CONFIG_FILENAME = "highspeed-rail.json5";
     private static final Path CONFIG_FILE_PATH = Paths.get("config", CONFIG_FILENAME);
-
-    // ===================================================================================
-    // Fields
-
-    private final Logger logger = LogManager.getLogger(LOGGER_NAME);
 
     // ===================================================================================
     // ModInitializer implementation
@@ -63,8 +55,16 @@ public class HighspeedService implements ModInitializer {
         INSTANCE = this;
     }
 
+    public void initClientService(HighspeedClientService clientService) {
+        if (this.clientService != null) throw new IllegalStateException();
+        this.clientService = requireNonNull(clientService);
+    }
+
+    // ===================================================================================
+    // Public methods
+
     public Integer getCartSpeed(Identifier id) {
-        for (HighspeedConfig.HighspeedBlockConfig bc : this.config.blockCOnfigs()) {
+        for (HighspeedConfig.HighspeedBlockConfig bc : this.config.blockConfigs()) {
             if (id.equals(bc.blockId())) return bc.cartSpeed();
         }
         return null;
@@ -80,6 +80,11 @@ public class HighspeedService implements ModInitializer {
 
     public boolean isIceBoatsEnabled() {
         return this.config.isIceBoatsEnabled();
+    }
+
+    public HighspeedClientService getClientService() {
+        if (this.clientService == null) throw new UnsupportedOperationException("clientService not initialized");
+        return this.clientService;
     }
 
 }
