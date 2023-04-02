@@ -14,8 +14,9 @@
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "net.pcal.highspeed.HighspeedService"
+    "main": ["net.pcal.highspeed.HighspeedService"],
+    "client": [
+      "net.pcal.highspeed.HighspeedClientService"
     ]
   },
   "mixins": [
