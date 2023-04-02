@@ -30,6 +30,4 @@ public class HighspeedClientService implements ClientModInitializer {
         final ClientPlayerEntity player = requireNonNull(MinecraftClient.getInstance().player);
         player.sendMessage(Text.literal(message), true);
     }
-
-
 }
