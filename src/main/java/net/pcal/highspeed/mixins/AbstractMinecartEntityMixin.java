@@ -98,7 +98,7 @@ public abstract class AbstractMinecartEntityMixin {
         if (!service.isSpeedometerEnabled()) return;
         final AbstractMinecartEntity minecart = (AbstractMinecartEntity) (Object) this;
         if (!minecart.world.isClient) return;
-        final HighspeedClientService client = service.getClientDelegate();
+        final HighspeedClientService client = service.getClientService();
         if (!client.isPlayerRiding(minecart)) return;
         final double override = getModifiedMaxSpeed();
         final Vec3d vel = minecart.getVelocity();

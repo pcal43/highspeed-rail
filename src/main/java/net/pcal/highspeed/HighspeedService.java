@@ -19,7 +19,7 @@ public class HighspeedService implements ModInitializer {
 
     private static HighspeedService INSTANCE = null;
     private HighspeedConfig config;
-    private HighspeedClientService clientDelegate;
+    private HighspeedClientService clientService;
 
     public static HighspeedService getInstance() {
         return requireNonNull(INSTANCE);
@@ -55,9 +55,9 @@ public class HighspeedService implements ModInitializer {
         INSTANCE = this;
     }
 
-    public void initClientDelegate(HighspeedClientService clientDelegate) {
-        if (this.clientDelegate != null) throw new IllegalStateException();
-        this.clientDelegate = requireNonNull(clientDelegate);
+    public void initClientService(HighspeedClientService clientService) {
+        if (this.clientService != null) throw new IllegalStateException();
+        this.clientService = requireNonNull(clientService);
     }
 
     // ===================================================================================
@@ -82,9 +82,9 @@ public class HighspeedService implements ModInitializer {
         return this.config.isIceBoatsEnabled();
     }
 
-    public HighspeedClientService getClientDelegate() {
-        if (this.clientDelegate == null) throw new UnsupportedOperationException("clientDelegate not initialized");
-        return this.clientDelegate;
+    public HighspeedClientService getClientService() {
+        if (this.clientService == null) throw new UnsupportedOperationException("clientService not initialized");
+        return this.clientService;
     }
 
 }
