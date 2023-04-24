@@ -94,37 +94,51 @@ public abstract class AbstractMinecartEntityMixin {
         }
         lastMaxSpeed = maxSpeed;
     }
-
+    
+    Object speedometer = null;
     private void updateSpeedometer() {
         if (!HighspeedService.getInstance().isSpeedometerEnabled()) return;
         final AbstractMinecartEntity minecart = (AbstractMinecartEntity) (Object) this;
         if (!minecart.world.isClient) return;
-        final ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null || player.getVehicle() != minecart) return;
-        final double override = getModifiedMaxSpeed();
-        final Vec3d vel = minecart.getVelocity();
-        final Vec3d nominalVelocity = new Vec3d(MathHelper.clamp(vel.x, -override, override), 0.0, MathHelper.clamp(vel.z, -override, override));
-        final Double nominalSpeed = (nominalVelocity.horizontalLength() * 20);
-        final String display;
-        if (!HighspeedService.getInstance().isSpeedometerTrueSpeedEnabled()) {
-            display = String.format("| %.2f bps |", nominalSpeed);
-        } else {
-            final double trueSpeed;
-            if (this.lastSpeedPos == null) {
-                trueSpeed = 0.0;
-                lastSpeedPos = player.getPos();
-                lastSpeedTime = System.currentTimeMillis();
+	if (speedometer == null) {
+	    speedometer = new Speedometer(this);
+	}
+	((Speedometer) speedometer).updateClientSpeedometer();
+    }
+
+    static class Speedometer {
+	AbstractMinecartEntityMixin mixin;
+	Speedometer(AbstractMinecartEntityMixin mixin) {
+	    this.mixin = mixin;
+	}
+        private void updateClientSpeedometer() {
+            final ClientPlayerEntity player = MinecraftClient.getInstance().player;
+            if (player == null || player.getVehicle() != mixin.minecart) return;
+            final double override = mixin.getModifiedMaxSpeed();
+            final Vec3d vel = mixin.minecart.getVelocity();
+            final Vec3d nominalVelocity = new Vec3d(MathHelper.clamp(vel.x, -override, override), 0.0, MathHelper.clamp(vel.z, -override, override));
+            final Double nominalSpeed = (nominalVelocity.horizontalLength() * 20);
+            final String display;
+            if (!HighspeedService.getInstance().isSpeedometerTrueSpeedEnabled()) {
+                display = String.format("| %.2f bps |", nominalSpeed);
             } else {
-                final long now = System.currentTimeMillis();
-                final Vec3d playerPos = player.getPos();
-                final Vec3d vector = playerPos.subtract(this.lastSpeedPos);
-                trueSpeed = vector.horizontalLength() * 1000 / ((now - lastSpeedTime));
-                this.lastSpeedPos = playerPos;
-                lastSpeedTime = now;
+                final double trueSpeed;
+                if (mixin.lastSpeedPos == null) {
+                    trueSpeed = 0.0;
+                    mixin.lastSpeedPos = player.getPos();
+                    mixin.lastSpeedTime = System.currentTimeMillis();
+                } else {
+                    final long now = System.currentTimeMillis();
+                    final Vec3d playerPos = player.getPos();
+                    final Vec3d vector = playerPos.subtract(mixin.lastSpeedPos);
+                    trueSpeed = vector.horizontalLength() * 1000 / ((now - mixin.lastSpeedTime));
+                    mixin.lastSpeedPos = playerPos;
+                    mixin.lastSpeedTime = now;
+                }
+                display = String.format("| %.2f bps %.2f  |", nominalSpeed, trueSpeed);
             }
-            display = String.format("| %.2f bps %.2f  |", nominalSpeed, trueSpeed);
-        }
-        player.sendMessage(Text.literal(display), true);
+            player.sendMessage(Text.literal(display), true);
+	}
     }
 }
 
