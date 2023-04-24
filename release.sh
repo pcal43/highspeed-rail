@@ -26,8 +26,8 @@ fi
 
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "${CURRENT_BRANCH}" != 'main' ]; then
-  echo "Releases must be performed on main.  Currently on '${CURRENT_BRANCH}'"
+if [ "${CURRENT_BRANCH}" != '1.19.2' ]; then
+  echo "Releases must be performed on 1.19.2.  Currently on '${CURRENT_BRANCH}'"
   exit 1
 fi
 
