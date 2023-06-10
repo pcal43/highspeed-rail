@@ -63,13 +63,13 @@ public abstract class AbstractMinecartEntityMixin {
                 currentPos.getY(),
                 currentPos.getZ() + MathHelper.sign(v.getZ())
         );
-        final BlockState nextState = minecart.world.getBlockState(nextPos);
+        final BlockState nextState = minecart.getWorld().getBlockState(nextPos);
         if (nextState.getBlock() instanceof AbstractRailBlock rail) {
             final RailShape shape = nextState.get(rail.getShapeProperty());
             if (shape == RailShape.NORTH_EAST || shape == RailShape.NORTH_WEST || shape == RailShape.SOUTH_EAST || shape == RailShape.SOUTH_WEST) {
                 return maxSpeed = VANILLA_MAX_SPEED;
             } else {
-                final BlockState underState = minecart.world.getBlockState(currentPos.down());
+                final BlockState underState = minecart.getWorld().getBlockState(currentPos.down());
                 final Identifier underBlockId = Registries.BLOCK.getId(underState.getBlock());
                 final Integer cartSpeedBps = HighspeedService.getInstance().getCartSpeed(underBlockId);
                 if (cartSpeedBps != null) {
@@ -97,7 +97,7 @@ public abstract class AbstractMinecartEntityMixin {
         final HighspeedService service = HighspeedService.getInstance();
         if (!service.isSpeedometerEnabled()) return;
         final AbstractMinecartEntity minecart = (AbstractMinecartEntity) (Object) this;
-        if (!minecart.world.isClient) return;
+        if (!minecart.getWorld().isClient) return;
         final HighspeedClientService client = service.getClientService();
         if (!client.isPlayerRiding(minecart)) return;
         final double override = getModifiedMaxSpeed();
