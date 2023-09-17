@@ -40,6 +40,11 @@ This mod is published under the [MIT License](LICENSE).
 
 You're free to include this mod in your modpack provided you attribute it to pcal.net.
 
-## Discord
 
-https://discord.gg/jUP5nSPrjx
+## Questions?
+
+If you have questions about this mod, please join the Discord server:
+
+[https://discord.pcal.net](https://discord.pcal.net)
+
+Comments have been disabled and I will **not** reply to private messages on Curseforge.
