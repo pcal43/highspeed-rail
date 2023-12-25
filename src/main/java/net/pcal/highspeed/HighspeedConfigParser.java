@@ -1,7 +1,7 @@
 package net.pcal.highspeed;
 
 import com.google.gson.Gson;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.pcal.highspeed.HighspeedConfig.HighspeedBlockConfig;
 
 import java.io.BufferedReader;
@@ -24,7 +24,7 @@ class HighspeedConfigParser {
         final HighspeedConfigGson configGson = gson.fromJson(rawJson, HighspeedConfigGson.class);
         for (HighspeedBlockConfigGson blockGson : configGson.blocks) {
             HighspeedBlockConfig bc = new HighspeedBlockConfig(
-                    new Identifier(requireNonNull(blockGson.blockId, "blockId is required")),
+                    new ResourceLocation(requireNonNull(blockGson.blockId, "blockId is required")),
                     requireNonNull(blockGson.cartSpeed)
             );
             blocks.add(bc);

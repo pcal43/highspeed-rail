@@ -1,8 +1,7 @@
 package net.pcal.highspeed;
 
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.resources.ResourceLocation;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,7 +62,7 @@ public class HighspeedService implements ModInitializer {
     // ===================================================================================
     // Public methods
 
-    public Integer getCartSpeed(Identifier id) {
+    public Integer getCartSpeed(ResourceLocation id) {
         for (HighspeedConfig.HighspeedBlockConfig bc : this.config.blockConfigs()) {
             if (id.equals(bc.blockId())) return bc.cartSpeed();
         }

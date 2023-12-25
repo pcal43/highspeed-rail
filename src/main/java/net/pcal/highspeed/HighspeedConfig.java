@@ -1,8 +1,7 @@
 package net.pcal.highspeed;
 
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
 
 public record HighspeedConfig(
         List<HighspeedBlockConfig> blockConfigs,
@@ -12,7 +11,7 @@ public record HighspeedConfig(
 ) {
 
     public record HighspeedBlockConfig(
-            Identifier blockId,
+            ResourceLocation blockId,
             int cartSpeed
     ) {
     }
