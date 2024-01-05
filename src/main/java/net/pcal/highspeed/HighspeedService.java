@@ -23,11 +23,11 @@ public class HighspeedService implements ModInitializer {
     public static HighspeedService getInstance() {
         return requireNonNull(INSTANCE);
     }
-
+l
     // ===================================================================================
     // Constants
 
-    private static final String CONFIG_RESOURCE_NAME = "default-config.json5";
+    private static final String CONFIG_RESOURCE_NAME = "net/pcal/highspeed/default-config.json5";
     private static final String CONFIG_FILENAME = "highspeed-rail.json5";
     private static final Path CONFIG_FILE_PATH = Paths.get("config", CONFIG_FILENAME);
 
