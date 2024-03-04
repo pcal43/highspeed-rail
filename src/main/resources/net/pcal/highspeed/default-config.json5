@@ -1,3 +1,6 @@
+// NOTE: This is not actually json5 - it's parsed with minecraft's built-in json parser but with
+// some preprocessing to allow for '//' -style comments like this one.  The lie in the .json5 
+// extension just helps text editors deal with it.
 {
 
 
