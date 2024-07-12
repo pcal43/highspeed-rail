@@ -7,13 +7,13 @@ public record HighspeedConfig(
         List<HighspeedBlockConfig> blockConfigs,
         boolean isSpeedometerEnabled,
         boolean isTrueSpeedometerEnabled,
-        boolean isIceBoatsEnabled
+        boolean isIceBoatsEnabled,
+        Integer defaultSpeedLimit
 ) {
 
     public record HighspeedBlockConfig(
             ResourceLocation blockId,
-            int cartSpeed
+            Integer speedLimit
     ) {
     }
 }
-

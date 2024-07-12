@@ -1,13 +1,16 @@
 package net.pcal.highspeed;
 
+import com.google.common.collect.ImmutableMap;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
@@ -19,6 +22,7 @@ public class HighspeedService implements ModInitializer {
     private static HighspeedService INSTANCE = null;
     private HighspeedConfig config;
     private HighspeedClientService clientService;
+    private Map<ResourceLocation, Integer> speedLimitPerBlock;
 
     public static HighspeedService getInstance() {
         return requireNonNull(INSTANCE);
@@ -50,6 +54,11 @@ public class HighspeedService implements ModInitializer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        final ImmutableMap.Builder<ResourceLocation, Integer> b = ImmutableMap.builder();
+        this.config.blockConfigs().forEach(bc->b.put(bc.blockId(), bc.speedLimit()));
+        this.speedLimitPerBlock = b.build();
+
         if (INSTANCE != null) throw new IllegalStateException();
         INSTANCE = this;
     }
@@ -62,11 +71,12 @@ public class HighspeedService implements ModInitializer {
     // ===================================================================================
     // Public methods
 
-    public Integer getCartSpeed(ResourceLocation id) {
-        for (HighspeedConfig.HighspeedBlockConfig bc : this.config.blockConfigs()) {
-            if (id.equals(bc.blockId())) return bc.cartSpeed();
-        }
-        return null;
+    /**
+     * @return the maximum speed (in blocks-per-second) that a cart travelling on a rail sitting
+     * on the given block type can travel at.  Returns null if the vanilla default should be used.
+     */
+    public Integer getSpeedLimit(ResourceLocation blockId) {
+        return this.speedLimitPerBlock.getOrDefault(blockId, this.config.defaultSpeedLimit());
     }
 
     public boolean isSpeedometerEnabled() {
@@ -85,5 +95,4 @@ public class HighspeedService implements ModInitializer {
         if (this.clientService == null) throw new UnsupportedOperationException("clientService not initialized");
         return this.clientService;
     }
-
 }

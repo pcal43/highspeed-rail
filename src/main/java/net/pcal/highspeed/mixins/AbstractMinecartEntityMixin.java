@@ -25,7 +25,7 @@ public abstract class AbstractMinecartEntityMixin {
     private static final double SQRT_TWO = 1.414213;
 
     private BlockPos lastPos = null;
-    private double maxSpeed = VANILLA_MAX_SPEED;
+    private double currentMaxSpeed = VANILLA_MAX_SPEED;
     private double lastMaxSpeed = VANILLA_MAX_SPEED;
     private Vec3 lastSpeedPos = null;
     private long lastSpeedTime = 0;
@@ -54,7 +54,7 @@ public abstract class AbstractMinecartEntityMixin {
 
     private double getModifiedMaxSpeed() {
         final BlockPos currentPos = minecart.blockPosition();
-        if (currentPos.equals(lastPos)) return maxSpeed;
+        if (currentPos.equals(lastPos)) return currentMaxSpeed;
         lastPos = currentPos;
         // look at the *next* block the cart is going to hit
         final Vec3 v = minecart.getDeltaMovement();
@@ -67,19 +67,19 @@ public abstract class AbstractMinecartEntityMixin {
         if (nextState.getBlock() instanceof BaseRailBlock rail) {
             final RailShape shape = nextState.getValue(rail.getShapeProperty());
             if (shape == RailShape.NORTH_EAST || shape == RailShape.NORTH_WEST || shape == RailShape.SOUTH_EAST || shape == RailShape.SOUTH_WEST) {
-                return maxSpeed = VANILLA_MAX_SPEED;
+                return currentMaxSpeed = VANILLA_MAX_SPEED;
             } else {
                 final BlockState underState = minecart.level().getBlockState(currentPos.below());
                 final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
-                final Integer cartSpeedBps = HighspeedService.getInstance().getCartSpeed(underBlockId);
-                if (cartSpeedBps != null) {
-                    return maxSpeed = cartSpeedBps / 20.0;
+                final Integer speedLimit = HighspeedService.getInstance().getSpeedLimit(underBlockId);
+                if (speedLimit != null) {
+                    return currentMaxSpeed = speedLimit / 20.0;
                 } else {
-                    return maxSpeed = VANILLA_MAX_SPEED;
+                    return currentMaxSpeed = VANILLA_MAX_SPEED;
                 }
             }
         } else {
-            return maxSpeed = VANILLA_MAX_SPEED;
+            return currentMaxSpeed = VANILLA_MAX_SPEED;
         }
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractMinecartEntityMixin {
             minecart.setDeltaMovement(new Vec3(Mth.clamp(vel.x, -smaller, smaller), 0.0,
                     Mth.clamp(vel.z, -smaller, smaller)));
         }
-        lastMaxSpeed = maxSpeed;
+        lastMaxSpeed = currentMaxSpeed;
     }
 
     private void updateSpeedometer() {
