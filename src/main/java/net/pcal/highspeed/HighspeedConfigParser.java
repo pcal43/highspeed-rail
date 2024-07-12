@@ -25,7 +25,7 @@ class HighspeedConfigParser {
         for (HighspeedBlockConfigGson blockGson : configGson.blocks) {
             HighspeedBlockConfig bc = new HighspeedBlockConfig(
                     ResourceLocation.parse(requireNonNull(blockGson.blockId, "blockId is required")),
-                            blockGson.cartSpeed != null ? blockGson.cartSpeed : blockGson.speedLimit
+                    blockGson.cartSpeed != null ? blockGson.cartSpeed : blockGson.speedLimit
             );
             blocks.add(bc);
         }

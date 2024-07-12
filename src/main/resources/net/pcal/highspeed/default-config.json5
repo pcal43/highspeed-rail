@@ -37,5 +37,4 @@
   // Whether Vanilla ice boats should be allowed.  Set to 'false' to limit ice boats to ground speed; 'true'
   // The mod must be installed on the client for this to work.
   'isIceBoatsEnabled'        : false
-
 }
