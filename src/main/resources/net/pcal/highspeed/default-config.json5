@@ -1,31 +1,40 @@
 // NOTE: This is not actually json5 - it's parsed with minecraft's built-in json parser but with
-// some preprocessing to allow for '//' -style comments like this one.  The lie in the .json5 
+// some preprocessing to allow for '//' -style comments like this one.  The lie in the .json5
 // extension just helps text editors deal with it.
 {
 
-
-  //
-  // List of blocks and how they affect a train travelling on top.  cartSpeed is in blocks-per-second.
-  //
+  // Sets the maximum speed (in blocks-per-second) for carts travelling on specific blocks.  The speedLimit in
+  // Vanilla is 8.
   'blocks' : [
     {
-        'blockId': 'minecraft:gravel',
-        'cartSpeed': 40
+      'blockId': 'minecraft:gravel',
+      'speedLimit': 40
+    },
+    {
+      'blockId': 'minecraft:slime_block',
+      'speedLimit': 4
     }
   ],
 
-  // Whether a speedometer should be displayed when you get in a minecart.
+  // Sets the default maximum speed for blocks not configured above.  A value of 'null' here means to use the
+  // Vanilla speedLimit (8).
   //
-  // The mod must be installed on the client for this to work.
+  // If you change this, you should also configure at least one kind of block to maintain Vanilla speed (i.e.,
+  // by setting 'speedLimit' for a block to be 8 (or null) in the 'blocks' section above).  Experience shows that
+  // carts can derail or reverse unexpectedly in certain situations when travelling above the Vanilla speed limit,
+  // so you'll want to have at least one block type that can act as a 'brake.'
+  'defaultSpeedLimit'        : null,
+
+  // Whether a speedometer should be displayed when you get in a minecart.  The mod must be installed on the client
+  // in order for this to work.
   'isSpeedometerEnabled'     : true,
 
-  // Whether the 'true' speed should also be displayed on the speedometer.  The deafult speedometer just shows your
+  // Whether the 'true' speed should also be displayed on the speedometer.  The default speedometer just shows your
   // approximate speed; this precisely measures distance travelled every tick.  It's more resource-intensive
   // and also flickers sort of annoyingly, so disabled by default.  There's usually not much difference, anyway.
   'isTrueSpeedometerEnabled' : false,
 
   // Whether Vanilla ice boats should be allowed.  Set to 'false' to limit ice boats to ground speed; 'true'
-  //
   // The mod must be installed on the client for this to work.
   'isIceBoatsEnabled'        : false
 }

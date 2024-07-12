@@ -25,7 +25,7 @@ class HighspeedConfigParser {
         for (HighspeedBlockConfigGson blockGson : configGson.blocks) {
             HighspeedBlockConfig bc = new HighspeedBlockConfig(
                     ResourceLocation.parse(requireNonNull(blockGson.blockId, "blockId is required")),
-                    requireNonNull(blockGson.cartSpeed)
+                    blockGson.cartSpeed != null ? blockGson.cartSpeed : blockGson.speedLimit
             );
             blocks.add(bc);
         }
@@ -34,7 +34,8 @@ class HighspeedConfigParser {
                 Collections.unmodifiableList(blocks),
                 requireNonNull(configGson.isSpeedometerEnabled, "isSpeedometerEnabled must be set"),
                 requireNonNull(configGson.isTrueSpeedometerEnabled, "isTrueSpeedometerEnabled must be set"),
-                requireNonNull(configGson.isIceBoatsEnabled, "isIceBoatsEnabled must be set")
+                requireNonNull(configGson.isIceBoatsEnabled, "isIceBoatsEnabled must be set"),
+                configGson.defaultSpeedLimit // may be null
         );
     }
 
@@ -59,10 +60,12 @@ class HighspeedConfigParser {
         Boolean isSpeedometerEnabled;
         Boolean isTrueSpeedometerEnabled;
         Boolean isIceBoatsEnabled;
+        Integer defaultSpeedLimit;
     }
 
     public static class HighspeedBlockConfigGson {
         String blockId;
-        Integer cartSpeed;
+        Integer speedLimit;
+        Integer cartSpeed; // for backward compat
     }
 }
