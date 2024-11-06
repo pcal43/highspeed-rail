@@ -4,8 +4,9 @@
   "package": "net.pcal.highspeed.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "AbstractMinecartEntityMixin",
-    "BoatEntityMixin"
+    "OldMinecartBehaviorMixin",
+    "AbstractBoatEntityMixin",
+    "MinecartBehaviorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
