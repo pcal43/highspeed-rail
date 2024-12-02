@@ -8,7 +8,7 @@ import net.minecraft.world.entity.vehicle.MinecartBehavior;
 
 @Mixin(MinecartBehavior.class)
 public interface MinecartBehaviorAccessor {
-    
+
     @Accessor("minecart")
     AbstractMinecart getMinecart();
 }

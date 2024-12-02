@@ -53,7 +53,6 @@ public abstract class OldMinecartBehaviorMixin {
         if (maxSpeed != VANILLA_MAX_SPEED) {
             cir.setReturnValue(maxSpeed);
         }
-        
     }
 
     private double getModifiedMaxSpeed() {
@@ -67,7 +66,6 @@ public abstract class OldMinecartBehaviorMixin {
                 currentPos.getY(),
                 currentPos.getZ() + Mth.sign(v.z())
         );
-        System.out.println(nextPos);
         final BlockState nextState = minecart.level().getBlockState(nextPos);
         if (nextState.getBlock() instanceof BaseRailBlock rail) {
             final RailShape shape = nextState.getValue(rail.getShapeProperty());
@@ -76,7 +74,6 @@ public abstract class OldMinecartBehaviorMixin {
             } else {
                 final BlockState underState = minecart.level().getBlockState(currentPos.below());
                 final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
-                System.out.println(underBlockId);
                 final Integer speedLimit = HighspeedService.getInstance().getSpeedLimit(underBlockId);
                 if (speedLimit != null) {
                     return currentMaxSpeed = speedLimit / 20.0;

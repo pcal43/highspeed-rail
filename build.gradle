@@ -1,10 +1,8 @@
 plugins {
-	id 'fabric-loom' version '1.8-SNAPSHOT'
-	id 'maven-publish'
-	id "com.modrinth.minotaur" version "2.+"
-	id "com.matthewprenger.cursegradle" version "1.4.0"
+        id 'fabric-loom' version '1.8.9'
+        id "com.modrinth.minotaur" version "2.+"
+        id "com.matthewprenger.cursegradle" version "1.4.0"
 }
-
 
 sourceCompatibility = JavaVersion.VERSION_21
 targetCompatibility = JavaVersion.VERSION_21
@@ -21,13 +19,16 @@ repositories {
 	// for more information about repositories.
 }
 
+configurations {
+        // configuration that holds jars to include in the jar
+        extraLibs
+}
+
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
