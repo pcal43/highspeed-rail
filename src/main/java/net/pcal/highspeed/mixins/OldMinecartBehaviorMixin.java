@@ -53,7 +53,6 @@ public abstract class OldMinecartBehaviorMixin {
         if (maxSpeed != VANILLA_MAX_SPEED) {
             cir.setReturnValue(maxSpeed);
         }
-        
     }
 
     private double getModifiedMaxSpeed() {
