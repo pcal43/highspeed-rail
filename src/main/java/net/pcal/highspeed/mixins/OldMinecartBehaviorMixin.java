@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.vehicle.OldMinecartBehavior;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.phys.Vec3;
 import net.pcal.highspeed.HighspeedClientService;
 import net.pcal.highspeed.HighspeedService;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,8 +20,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AbstractMinecart.class)
-public abstract class AbstractMinecartEntityMixin {
+@Mixin(OldMinecartBehavior.class)
+public abstract class OldMinecartBehaviorMixin {
 
     private static final double VANILLA_MAX_SPEED = 8.0 / 20.0;
     private static final double SQRT_TWO = 1.414213;
@@ -29,7 +31,8 @@ public abstract class AbstractMinecartEntityMixin {
     private double lastMaxSpeed = VANILLA_MAX_SPEED;
     private Vec3 lastSpeedPos = null;
     private long lastSpeedTime = 0;
-    private final AbstractMinecart minecart = (AbstractMinecart) (Object) this;
+    private final OldMinecartBehavior minecartBehavior = (OldMinecartBehavior) (Object) this;
+    private final AbstractMinecart minecart = ((MinecartBehaviorAccessor) minecartBehavior).getMinecart();
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
@@ -50,6 +53,7 @@ public abstract class AbstractMinecartEntityMixin {
         if (maxSpeed != VANILLA_MAX_SPEED) {
             cir.setReturnValue(maxSpeed);
         }
+        
     }
 
     private double getModifiedMaxSpeed() {
@@ -63,6 +67,7 @@ public abstract class AbstractMinecartEntityMixin {
                 currentPos.getY(),
                 currentPos.getZ() + Mth.sign(v.z())
         );
+        System.out.println(nextPos);
         final BlockState nextState = minecart.level().getBlockState(nextPos);
         if (nextState.getBlock() instanceof BaseRailBlock rail) {
             final RailShape shape = nextState.getValue(rail.getShapeProperty());
@@ -71,6 +76,7 @@ public abstract class AbstractMinecartEntityMixin {
             } else {
                 final BlockState underState = minecart.level().getBlockState(currentPos.below());
                 final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
+                System.out.println(underBlockId);
                 final Integer speedLimit = HighspeedService.getInstance().getSpeedLimit(underBlockId);
                 if (speedLimit != null) {
                     return currentMaxSpeed = speedLimit / 20.0;
@@ -96,7 +102,7 @@ public abstract class AbstractMinecartEntityMixin {
     private void updateSpeedometer() {
         final HighspeedService service = HighspeedService.getInstance();
         if (!service.isSpeedometerEnabled()) return;
-        final AbstractMinecart minecart = (AbstractMinecart) (Object) this;
+        final AbstractMinecart minecart = ((MinecartBehaviorAccessor) (OldMinecartBehavior) (Object) this).getMinecart();
         if (!minecart.level().isClientSide) return;
         final HighspeedClientService client = service.getClientService();
         if (!client.isPlayerRiding(minecart)) return;
