@@ -14,6 +14,7 @@ import net.pcal.highspeed.HighspeedClientService;
 import net.pcal.highspeed.HighspeedService;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -55,6 +56,7 @@ public abstract class OldMinecartBehaviorMixin {
         }
     }
 
+    @Unique
     private double getModifiedMaxSpeed() {
         final BlockPos currentPos = minecart.blockPosition();
         if (currentPos.equals(lastPos)) return currentMaxSpeed;
@@ -86,6 +88,7 @@ public abstract class OldMinecartBehaviorMixin {
         }
     }
 
+    @Unique
     private void clampVelocity() {
         if (getModifiedMaxSpeed() != lastMaxSpeed) {
             double smaller = Math.min(getModifiedMaxSpeed(), lastMaxSpeed);
@@ -96,6 +99,7 @@ public abstract class OldMinecartBehaviorMixin {
         lastMaxSpeed = currentMaxSpeed;
     }
 
+    @Unique
     private void updateSpeedometer() {
         final HighspeedService service = HighspeedService.getInstance();
         if (!service.isSpeedometerEnabled()) return;
