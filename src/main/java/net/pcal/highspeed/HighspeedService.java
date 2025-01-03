@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
 
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 import static java.util.Objects.requireNonNull;
 
@@ -23,6 +27,7 @@ public class HighspeedService implements ModInitializer {
     private HighspeedConfig config;
     private HighspeedClientService clientService;
     private Map<ResourceLocation, Integer> speedLimitPerBlock;
+    private final Logger logger = LogManager.getLogger("HighspeedRail");
 
     public static HighspeedService getInstance() {
         return requireNonNull(INSTANCE);
@@ -59,6 +64,9 @@ public class HighspeedService implements ModInitializer {
         this.config.blockConfigs().forEach(bc->b.put(bc.blockId(), bc.speedLimit()));
         this.speedLimitPerBlock = b.build();
 
+        if (this.config.isExperimentalMovementForceEnabled()) {
+            this.logger.warn("Experimental minecart movement is force-enabled.  This may cause unexpected behavior.");
+        }
         if (INSTANCE != null) throw new IllegalStateException();
         INSTANCE = this;
     }
@@ -74,6 +82,8 @@ public class HighspeedService implements ModInitializer {
     /**
      * @return the maximum speed (in blocks-per-second) that a cart travelling on a rail sitting
      * on the given block type can travel at.  Returns null if the vanilla default should be used.
+     *
+     * FIXME this should be a Double.
      */
     public Integer getSpeedLimit(ResourceLocation blockId) {
         return this.speedLimitPerBlock.getOrDefault(blockId, this.config.defaultSpeedLimit());
@@ -89,6 +99,10 @@ public class HighspeedService implements ModInitializer {
 
     public boolean isIceBoatsEnabled() {
         return this.config.isIceBoatsEnabled();
+    }
+
+    public boolean isExperimentalMovementForceEnabled() {
+        return this.config.isExperimentalMovementForceEnabled();
     }
 
     public HighspeedClientService getClientService() {

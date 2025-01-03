@@ -8,6 +8,7 @@ public record HighspeedConfig(
         boolean isSpeedometerEnabled,
         boolean isTrueSpeedometerEnabled,
         boolean isIceBoatsEnabled,
+        boolean isExperimentalMovementForceEnabled,
         Integer defaultSpeedLimit
 ) {
 

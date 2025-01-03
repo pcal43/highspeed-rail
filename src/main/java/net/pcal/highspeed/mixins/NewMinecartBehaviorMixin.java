@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Mixin(NewMinecartBehavior.class)
 public abstract class NewMinecartBehaviorMixin {
@@ -119,8 +120,11 @@ public abstract class NewMinecartBehaviorMixin {
 
     @Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
     protected void getMaxSpeed(CallbackInfoReturnable<Double> cir) {
-        double blockSpeed = 83.0;
-        cir.setReturnValue(blockSpeed * (this.minecart.isInWater() ? (double)0.5F : (double)1.0F) / (double)20.0F);
+        final BlockPos currentPos = minecart.blockPosition();
+        final BlockState underState = minecart.level().getBlockState(currentPos.below());
+        final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
+        final Integer speedLimit = Objects.requireNonNullElse(HighspeedService.getInstance().getSpeedLimit(underBlockId), 20);
+        cir.setReturnValue(speedLimit * (this.minecart.isInWater() ? (double)0.5F : (double)1.0F) / (double)20.0F);
     }
 
     private void updateSpeedometer() {

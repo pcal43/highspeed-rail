@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 class HighspeedConfigParser {
 
@@ -32,9 +33,10 @@ class HighspeedConfigParser {
         // adjust logging to configured level
         return new HighspeedConfig(
                 Collections.unmodifiableList(blocks),
-                requireNonNull(configGson.isSpeedometerEnabled, "isSpeedometerEnabled must be set"),
-                requireNonNull(configGson.isTrueSpeedometerEnabled, "isTrueSpeedometerEnabled must be set"),
-                requireNonNull(configGson.isIceBoatsEnabled, "isIceBoatsEnabled must be set"),
+                requireNonNullElse(configGson.isSpeedometerEnabled,true),
+                requireNonNullElse(configGson.isTrueSpeedometerEnabled, false),
+                requireNonNullElse(configGson.isIceBoatsEnabled, false),
+                requireNonNullElse(configGson.isExperimentalMovementForceEnabled, false),
                 configGson.defaultSpeedLimit // may be null
         );
     }
@@ -61,6 +63,7 @@ class HighspeedConfigParser {
         Boolean isTrueSpeedometerEnabled;
         Boolean isIceBoatsEnabled;
         Integer defaultSpeedLimit;
+        Boolean isExperimentalMovementForceEnabled;        ;
     }
 
     public static class HighspeedBlockConfigGson {
