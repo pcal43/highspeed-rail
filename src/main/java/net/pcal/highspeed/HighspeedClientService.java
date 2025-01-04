@@ -52,11 +52,9 @@ public class HighspeedClientService implements ClientModInitializer {
         }
         final int TICKS_PER_LERP = 3; //??
         double speed = distanceTraveled * 20 / TICKS_PER_LERP;
-        //speed -= 1.2; // WTF IS THIS
-        //nominalSpeed -= ((currentLerpSteps.size()) / currentLerpStepsTotalWeight); // WTF IS THIS
         final String display;
         if (speed < 10) {
-            display = String.format("! %.1f bps |", speed);//, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
+            display = String.format("| %.1f bps |", speed);//, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
         } else {
             // not entirely clear why the -1 is necesary here but it makes the top speed line up with the maxSpeed
             display = String.format("! %d bps |", Math.round(speed) - 1); //, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);

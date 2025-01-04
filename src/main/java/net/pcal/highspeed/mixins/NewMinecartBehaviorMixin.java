@@ -3,13 +3,10 @@ package net.pcal.highspeed.mixins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
-
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.pcal.highspeed.HighspeedService;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,15 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(NewMinecartBehavior.class)
 public abstract class NewMinecartBehaviorMixin {
-
-    @Shadow
-    public NewMinecartBehavior.MinecartStep oldLerp;
-
-    @Unique
-    private static final int VANILLA_MAX_BPS = 20;
-
-    @Unique
-    private final NewMinecartBehavior minecartBehavior = (NewMinecartBehavior) (Object) this;
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
