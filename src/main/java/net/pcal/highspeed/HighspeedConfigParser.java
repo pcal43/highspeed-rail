@@ -46,7 +46,7 @@ class HighspeedConfigParser {
             if (configGson.defaults != null) {
                 defaultConfig = createPerBlockConfig(configGson.defaults);
             } else if (configGson.defaultSpeedLimit != null) { // legacy support
-                defaultConfig = new PerBlockConfig(configGson.defaultSpeedLimit, null, null, null, null, null, null, null);
+                defaultConfig = new PerBlockConfig(configGson.defaultSpeedLimit, null, null, null, null, null, null, null, null);
             } else {
                 defaultConfig = null;
             }
@@ -94,6 +94,7 @@ class HighspeedConfigParser {
 
     private static PerBlockConfig createPerBlockConfig(PerBlockConfigGson blockGson) {
         return new PerBlockConfig(
+                blockGson.oldMaxSpeed,
                 blockGson.maxSpeed,
                 blockGson.boostAmount1,
                 blockGson.boostAmount2,
@@ -108,6 +109,7 @@ class HighspeedConfigParser {
     private static PerBlockConfig mergeConfigs(PerBlockConfig base, PerBlockConfig overrides) {
         if (base == null) return overrides;
         return new PerBlockConfig(
+                elvis(overrides.oldMaxSpeed(), base.oldMaxSpeed()),
                 elvis(overrides.maxSpeed(), base.maxSpeed()),
                 elvis(overrides.boostAmount1(), base.boostAmount1()),
                 elvis(overrides.boostAmount2(), base.boostAmount2()),
@@ -140,7 +142,8 @@ class HighspeedConfigParser {
 
     public static class PerBlockConfigGson {
         List<String> blockIds;
-        @SerializedName(value = "maxSpeed", alternate = {"cartSpeed", "speedLimit"}) // alternates for backwards compat
+        @SerializedName(value = "oldMaxSpeed", alternate = {"cartSpeed", "speedLimit"}) // alternates for backwards compat
+        Integer oldMaxSpeed;
         Integer maxSpeed;
         Double boostAmount1;
         Double boostAmount2;

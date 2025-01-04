@@ -86,9 +86,9 @@ public class HighspeedService implements ModInitializer {
      *
      * FIXME this should be a Double.
      */
-    public Integer getMaxSpeed(OldMinecartBehavior omb, AbstractMinecart minecart, ResourceLocation blockId) {
+    public Integer getOldMaxSpeed(OldMinecartBehavior omb, AbstractMinecart minecart, ResourceLocation blockId) {
         final PerBlockConfig pbc = this.getPerBlockConfig(minecart);
-        return pbc == null ? null : pbc.maxSpeed();
+        return pbc == null ? null : pbc.oldMaxSpeed();
     }
 
     // ===================================================================================

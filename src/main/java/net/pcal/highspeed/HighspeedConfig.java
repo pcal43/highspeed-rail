@@ -14,6 +14,7 @@ public record HighspeedConfig(
 ) {
 
     public record PerBlockConfig(
+            Integer oldMaxSpeed,
             Integer maxSpeed,
             Double boostAmount1,
             Double boostAmount2,

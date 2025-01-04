@@ -93,7 +93,7 @@ public abstract class OldMinecartBehaviorMixin {
             } else {
                 final BlockState underState = minecart.level().getBlockState(currentPos.below());
                 final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
-                final Integer maxSpeed = HighspeedService.getInstance().getMaxSpeed(
+                final Integer maxSpeed = HighspeedService.getInstance().getOldMaxSpeed(
                         (OldMinecartBehavior) (Object) this, minecart, underBlockId);
                 if (maxSpeed != null) {
                     return currentMaxSpeed = maxSpeed / 20.0;
