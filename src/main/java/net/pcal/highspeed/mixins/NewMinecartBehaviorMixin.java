@@ -8,12 +8,10 @@ import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
 
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.pcal.highspeed.HighspeedClientService;
 import net.pcal.highspeed.HighspeedService;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -37,11 +35,21 @@ public abstract class NewMinecartBehaviorMixin {
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        updateSpeedometer();
+        final AbstractMinecart minecart = ((MinecartBehaviorAccessor) this).getMinecart();
+        if (!minecart.level().isClientSide()) return;
+        final HighspeedService service = HighspeedService.getInstance();
+        if (!service.isSpeedometerEnabled()) return;
+        HighspeedService.getInstance().getClientService().updateSpeedometer((NewMinecartBehavior) (Object)this, minecart);
     }
 
     @Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
     protected void getMaxSpeed(CallbackInfoReturnable<Double> cir) {
+        final Double customMaxSpeed = HighspeedService.getInstance().getMaxSpeed(
+                (NewMinecartBehavior) (Object)this, ((MinecartBehaviorAccessor) this).getMinecart()
+        );
+        if (customMaxSpeed != null) cir.setReturnValue(customMaxSpeed);
+
+
         final AbstractMinecart minecart = ((MinecartBehaviorAccessor) this).getMinecart();
         final BlockPos currentPos = minecart.blockPosition();
         final BlockState underState = minecart.level().getBlockState(currentPos.below());
@@ -50,27 +58,28 @@ public abstract class NewMinecartBehaviorMixin {
         cir.setReturnValue(speedLimit * (minecart.isInWater() ? (double) 0.5F : (double) 1.0F) / (double) 20.0F);
     }
 
-    @Unique
-    private void updateSpeedometer() {
-        final AbstractMinecart minecart = ((MinecartBehaviorAccessor) this).getMinecart();
-        if (!minecart.level().isClientSide()) return;
-        final HighspeedService service = HighspeedService.getInstance();
-        if (!service.isSpeedometerEnabled()) return;
-        final HighspeedClientService client = service.getClientService();
-        if (!client.isPlayerRiding(minecart)) return;
-        double distanceTraveled = 0;
-        if (this.oldLerp != null && this.currentLerpSteps.size() > 2) {
-            // iterate through the lerp steps and calculate the speed
-            for (int i = 1; i < currentLerpSteps.size(); i++) {
-                distanceTraveled += currentLerpSteps.get(i - 1).position().distanceTo(currentLerpSteps.get(i).position());
-            }
-        }
-        final int TICKS_PER_LERP = 3; //??
-        double speed = distanceTraveled * 20 / TICKS_PER_LERP;
-        speed -= 1.2; // WTF IS THIS
-        //nominalSpeed -= ((currentLerpSteps.size()) / currentLerpStepsTotalWeight); // WTF IS THIS
-        String display = String.format("! %.2f bps ! lerps:%d weight:%.2f", speed, currentLerpSteps.size(), currentLerpStepsTotalWeight);
-        client.sendPlayerMessage(display);
+    @Inject(method = "getSlowdownFactor", at = @At("HEAD"), cancellable = true)
+    protected void getSlowdownFactor(CallbackInfoReturnable<Double> cir) {
+        final Double customSlowdownFactor = HighspeedService.getInstance().getSlowdownFactor(
+                (NewMinecartBehavior) (Object)this, ((MinecartBehaviorAccessor) this).getMinecart()
+        );
+        if (customSlowdownFactor != null) cir.setReturnValue(customSlowdownFactor);
+    }
+
+    @Inject(method = "calculateBoostTrackSpeed", at = @At("HEAD"), cancellable = true)
+    private void calculateBoostTrackSpeed(Vec3 vec3, BlockPos blockPos, BlockState blockState,  CallbackInfoReturnable<Vec3> cir) {
+        final Vec3 customBoostSpeed = HighspeedService.getInstance().calculateBoostTrackSpeed(
+                (NewMinecartBehavior) (Object)this, ((MinecartBehaviorAccessor) this).getMinecart(), vec3, blockPos, blockState
+        );
+        if (customBoostSpeed != null) cir.setReturnValue(customBoostSpeed);
+    }
+
+    @Inject(method = "calculateHaltTrackSpeed", at = @At("HEAD"), cancellable = true)
+    private void calculateHaltTrackSpeed(Vec3 vec3, BlockState blockState, CallbackInfoReturnable<Vec3> cir) {
+        final Vec3 customHaltSpeed = HighspeedService.getInstance().calculateHaltTrackSpeed(
+                (NewMinecartBehavior) (Object)this, ((MinecartBehaviorAccessor) this).getMinecart(), vec3, blockState
+        );
+        if (customHaltSpeed != null) cir.setReturnValue(customHaltSpeed);
     }
 }
 

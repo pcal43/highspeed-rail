@@ -1,8 +1,10 @@
 package net.pcal.highspeed;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.resources.ResourceLocation;
-import net.pcal.highspeed.HighspeedConfig.HighspeedBlockConfig;
+import net.pcal.highspeed.HighspeedConfig.PerBlockConfig;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
@@ -19,27 +22,41 @@ import static java.util.Objects.requireNonNullElse;
 class HighspeedConfigParser {
 
     static HighspeedConfig parse(final InputStream in) throws IOException {
-        final List<HighspeedBlockConfig> blocks = new ArrayList<>();
+        final List<PerBlockConfig> blocks = new ArrayList<>();
         final String rawJson = stripComments(new String(in.readAllBytes(), StandardCharsets.UTF_8));
         final Gson gson = new Gson();
         final HighspeedConfigGson configGson = gson.fromJson(rawJson, HighspeedConfigGson.class);
-        for (HighspeedBlockConfigGson blockGson : configGson.blocks) {
-            HighspeedBlockConfig bc = new HighspeedBlockConfig(
-                    ResourceLocation.parse(requireNonNull(blockGson.blockId, "blockId is required")),
-                    blockGson.cartSpeed != null ? blockGson.cartSpeed : blockGson.speedLimit
-            );
-            blocks.add(bc);
+        for (final PerBlockConfigGson blockGson : configGson.blocks) {
+            blocks.add(createPerBlockConfig(blockGson));
         }
+        final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> b = ImmutableMap.builder();
+        configGson.blocks.forEach(bcg -> b.put(bcg.blockId, createPerBlockConfig(bcg));
+        Map<ResourceLocation, PerBlockConfig> perBlockConfigs = b.build();
+
         // adjust logging to configured level
         return new HighspeedConfig(
-                Collections.unmodifiableList(blocks),
+                null,
+                perBlockConfigs,
                 requireNonNullElse(configGson.isSpeedometerEnabled,true),
                 requireNonNullElse(configGson.isTrueSpeedometerEnabled, false),
                 requireNonNullElse(configGson.isIceBoatsEnabled, false),
-                requireNonNullElse(configGson.isExperimentalMovementForceEnabled, false),
-                configGson.defaultSpeedLimit // may be null
+                requireNonNullElse(configGson.isExperimentalMovementForceEnabled, false)
         );
     }
+
+    private static PerBlockConfig createPerBlockConfig(PerBlockConfigGson blockGson) {
+        return new PerBlockConfig(
+                blockGson.maxSpeed,
+                blockGson.boostAmount1,
+                blockGson.boostAmount2,
+                blockGson.boostThreshold,
+                blockGson.haltThreshold,
+                blockGson.haltScale,
+                blockGson.slowdownFactorOccupied,
+                blockGson.slowdownFactorEmpty
+        );
+    }
+
 
     // ===================================================================================
     // Private methods
@@ -58,7 +75,9 @@ class HighspeedConfigParser {
     // Gson object model
 
     public static class HighspeedConfigGson {
-        List<HighspeedBlockConfigGson> blocks;
+        @SerializedName(value = "default")
+        PerBlockConfigGson dflt;
+        List<PerBlockConfigGson> blocks;
         Boolean isSpeedometerEnabled;
         Boolean isTrueSpeedometerEnabled;
         Boolean isIceBoatsEnabled;
@@ -66,9 +85,17 @@ class HighspeedConfigParser {
         Boolean isExperimentalMovementForceEnabled;        ;
     }
 
-    public static class HighspeedBlockConfigGson {
+    public static class PerBlockConfigGson {
         String blockId;
-        Integer speedLimit;
-        Integer cartSpeed; // for backward compat
+
+        @SerializedName(value = "maxSpeed", alternate = {"cartSpeed", "speedLimit"}) // alternates for backwards compat
+        Integer maxSpeed;
+        Double boostAmount1;
+        Double boostAmount2;
+        Double boostThreshold;
+        Double haltThreshold;
+        Double haltScale;
+        Double slowdownFactorOccupied;
+        Double slowdownFactorEmpty;
     }
 }
