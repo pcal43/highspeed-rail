@@ -1,10 +1,30 @@
 /**
- * Config file for Highspeed Rail.
+ * Config file for Highspeed Rail:
  *  https://modrinth.com/mod/highspeed-rail
  *
- * This file is not actually json5 - it's parsed with minecraft's built-in
- * json parser in lenient mode, mainly to make it ignore comments like this
- * one.  The lie with the .json5 extension just helps text editors happy.
+ * This default configuration file sets your world up to have fast minecarts
+ * when the rails are built on gravel blocks.  In normal worlds, minecarts
+ * on gravel will travel up to 40 blocks-per-second; in worlds with the
+ * experimental 'Minecart Improvements' enabled, carts on gravel will travel
+ * at 200 blocks-per-second.
+ *
+ * There's a lot you can tweak here, though, so read on.
+ *
+ *
+ * MINECART PHYSICS MODELS
+ *
+ * The mod supports both the classic minecart physics model as well as the
+ * new experimental model introduced in minecraft 1.21.3.  Some config
+ * settings only apply to the new physics model.  The mod provides an option
+ * to enable the new model even in old worlds.
+ *
+ *
+ * EDITING AND MANAGING THIS FILE
+ *
+ * That this file is not actually json5 - it's parsed with minecraft's
+ * built-in json parser in lenient mode, mainly to make it ignore comments
+ * like this one.  The lie with the .json5 extension just helps text editors
+ * happy.
  *
  * The default config file will automatically get created during Minecraft
  * startup if it doesn't exist.  If you get stuck with configuration errors,
@@ -15,10 +35,6 @@
  * Reasonable efforts are made to preserve backwards compatibility.  But you
  * may want to regenerate the default config after updating if you run into
  * problems or want to take advantage of new features.
- *
- * The mod supports both the classic minecart physics model as well as the
- * new experimental model introduced in minecraft 1.21.3.  Some config
- * settings only apply to the new physics model.
  */
 
 {
@@ -154,7 +170,7 @@
    * and also flickers sort of annoyingly, so disabled by default.  There's
    * usually not much difference, anyway.
    */
-  'isTrueSpeedometerEnabled' : true,
+  'isTrueSpeedometerEnabled' : false,
 
   /**
    * Applies to both the NEW and OLD physics models.  Mod must be installed
