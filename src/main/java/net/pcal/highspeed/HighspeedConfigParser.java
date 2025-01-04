@@ -9,7 +9,6 @@ import com.google.gson.stream.JsonReader;
 import net.minecraft.resources.ResourceLocation;
 import net.pcal.highspeed.HighspeedConfig.PerBlockConfig;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -22,7 +21,7 @@ import static java.util.Objects.requireNonNullElse;
 class HighspeedConfigParser {
 
     static HighspeedConfig parse(final InputStream in) throws IOException {
-        final String rawJson = stripComments(new String(in.readAllBytes(), StandardCharsets.UTF_8));
+        final String rawJson = (new String(in.readAllBytes(), StandardCharsets.UTF_8));
         final Gson gson = new GsonBuilder().setLenient().create();
         class TypoCatchingJsonReader extends JsonReader {
             public TypoCatchingJsonReader(StringReader in) {
@@ -59,7 +58,8 @@ class HighspeedConfigParser {
             if (configGson.blocks != null) {
                 final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> pbcs = ImmutableMap.builder();
                 configGson.blocks.forEach(bcg -> pbcs.put(
-                        ResourceLocation.parse(requireNonNull(bcg.blockId, "blockId is required")), createPerBlockConfig(bcg)));
+                        ResourceLocation.parse(requireNonNull(bcg.blockId, "blockId is required")),
+                        mergeConfigs(defaultConfig, createPerBlockConfig(bcg))));
                 perBlockConfigs = pbcs.build();
             } else {
                 perBlockConfigs = null;
@@ -77,6 +77,10 @@ class HighspeedConfigParser {
         );
     }
 
+
+    // ===================================================================================
+    // Private
+
     private static PerBlockConfig createPerBlockConfig(BlockConfigGson blockGson) {
         return new PerBlockConfig(
                 blockGson.maxSpeed,
@@ -90,17 +94,22 @@ class HighspeedConfigParser {
         );
     }
 
-    // ===================================================================================
-    // Private
+    private static PerBlockConfig mergeConfigs(PerBlockConfig base, PerBlockConfig overrides) {
+        if (base == null) return overrides;
+        return new PerBlockConfig(
+                elvis(overrides.maxSpeed(), base.maxSpeed()),
+                elvis(overrides.boostAmount1(), base.boostAmount1()),
+                elvis(overrides.boostAmount2(), base.boostAmount2()),
+                elvis(overrides.boostThreshold(), base.boostThreshold()),
+                elvis(overrides.haltThreshold(), base.haltThreshold()),
+                elvis(overrides.haltScale(), base.haltScale()),
+                elvis(overrides.slowdownFactorOccupied(), base.slowdownFactorOccupied()),
+                elvis(overrides.slowdownFactorEmpty(), base.slowdownFactorEmpty())
+        );
+    }
 
-    private static String stripComments(String json) throws IOException {
-        final StringBuilder out = new StringBuilder();
-        final BufferedReader br = new BufferedReader(new StringReader(json));
-        String line;
-        while ((line = br.readLine()) != null) {
-            if (!line.strip().startsWith(("//"))) out.append(line).append('\n');
-        }
-        return out.toString();
+    private static <T> T elvis(T first, T second) {
+        return first != null ? first : second;
     }
 
     // ===================================================================================
