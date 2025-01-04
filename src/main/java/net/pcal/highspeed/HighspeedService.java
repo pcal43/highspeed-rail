@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,13 +76,8 @@ public class HighspeedService implements ModInitializer {
         INSTANCE = this;
     }
 
-    public void initClientService(HighspeedClientService clientService) {
-        if (this.clientService != null) throw new IllegalStateException();
-        this.clientService = requireNonNull(clientService);
-    }
-
     // ===================================================================================
-    // Public methods
+    // OldMinecartBehavior support
 
     /**
      * @return the maximum speed (in blocks-per-second) that a cart travelling on a rail sitting
@@ -96,25 +90,11 @@ public class HighspeedService implements ModInitializer {
         return pbc == null ? null : pbc.maxSpeed();
     }
 
-    public boolean isSpeedometerEnabled() {
-        return this.config.isSpeedometerEnabled();
-    }
-
-    public boolean isSpeedometerTrueSpeedEnabled() {
-        return this.config.isTrueSpeedometerEnabled();
-    }
-
-    public boolean isIceBoatsEnabled() {
-        return this.config.isIceBoatsEnabled();
-    }
+    // ===================================================================================
+    // NewMinecartBehavior support
 
     public boolean isExperimentalMovementForceEnabled() {
         return this.config.isExperimentalMovementForceEnabled();
-    }
-
-    public HighspeedClientService getClientService() {
-        if (this.clientService == null) throw new UnsupportedOperationException("clientService not initialized");
-        return this.clientService;
     }
 
     public Double getMaxSpeed(NewMinecartBehavior nmb, AbstractMinecart minecart) {
@@ -157,6 +137,31 @@ public class HighspeedService implements ModInitializer {
     }
 
     // ===================================================================================
+    // Client-specific support.  This need to be a separate mod
+
+    public void initClientService(HighspeedClientService clientService) {
+        if (this.clientService != null) throw new IllegalStateException();
+        this.clientService = requireNonNull(clientService);
+    }
+
+    public boolean isSpeedometerEnabled() {
+        return this.config.isSpeedometerEnabled();
+    }
+
+    public boolean isSpeedometerTrueSpeedEnabled() {
+        return this.config.isTrueSpeedometerEnabled();
+    }
+
+    public boolean isIceBoatsEnabled() {
+        return this.config.isIceBoatsEnabled();
+    }
+
+    public HighspeedClientService getClientService() {
+        if (this.clientService == null) throw new UnsupportedOperationException("clientService not initialized");
+        return this.clientService;
+    }
+
+    // ===================================================================================
     // Private
 
     private PerBlockConfig getPerBlockConfig(AbstractMinecart minecart) {
@@ -164,6 +169,7 @@ public class HighspeedService implements ModInitializer {
     }
 
     private PerBlockConfig getPerBlockConfig(AbstractMinecart minecart, BlockPos minecartPos) {
+        if (this.config.blockConfigs() == null) return this.config.defaultBlockConfig();
         final BlockState underState = minecart.level().getBlockState(minecartPos);
         final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
         final PerBlockConfig pbc = this.config.blockConfigs().get(underBlockId);

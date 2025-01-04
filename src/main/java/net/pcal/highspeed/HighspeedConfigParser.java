@@ -22,9 +22,17 @@ class HighspeedConfigParser {
         final String rawJson = stripComments(new String(in.readAllBytes(), StandardCharsets.UTF_8));
         final Gson gson = new Gson();
         final HighspeedConfigGson configGson = gson.fromJson(rawJson, HighspeedConfigGson.class);
-        final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> pbcs = ImmutableMap.builder();
-        configGson.blocks.forEach(bcg -> pbcs.put(
-                ResourceLocation.parse(requireNonNull(bcg.blockId, "blockId is required")), createPerBlockConfig(bcg)));
+
+        final ImmutableMap<ResourceLocation, PerBlockConfig> perBlockConfigs;
+
+        if (configGson.blocks != null) {
+            final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> pbcs = ImmutableMap.builder();
+            configGson.blocks.forEach(bcg -> pbcs.put(
+                    ResourceLocation.parse(requireNonNull(bcg.blockId, "blockId is required")), createPerBlockConfig(bcg)));
+            perBlockConfigs = pbcs.build();
+        } else {
+            perBlockConfigs = null;
+        }
 
         final PerBlockConfig defaultConfig;
         if (configGson.dflt != null) {
@@ -39,7 +47,7 @@ class HighspeedConfigParser {
         // adjust logging to configured level
         return new HighspeedConfig(
                 defaultConfig,
-                pbcs.build(),
+                perBlockConfigs,
                 requireNonNullElse(configGson.isSpeedometerEnabled,true),
                 requireNonNullElse(configGson.isTrueSpeedometerEnabled, false),
                 requireNonNullElse(configGson.isIceBoatsEnabled, false),
