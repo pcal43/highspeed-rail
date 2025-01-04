@@ -2,7 +2,10 @@ package net.pcal.highspeed;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import net.minecraft.resources.ResourceLocation;
 import net.pcal.highspeed.HighspeedConfig.PerBlockConfig;
 
@@ -20,31 +23,50 @@ class HighspeedConfigParser {
 
     static HighspeedConfig parse(final InputStream in) throws IOException {
         final String rawJson = stripComments(new String(in.readAllBytes(), StandardCharsets.UTF_8));
-        final Gson gson = new Gson();
-        final HighspeedConfigGson configGson = gson.fromJson(rawJson, HighspeedConfigGson.class);
+        final Gson gson = new GsonBuilder().setLenient().create();
+        class TypoCatchingJsonReader extends JsonReader {
+            public TypoCatchingJsonReader(StringReader in) {
+                super(in);
+            }
 
-        final ImmutableMap<ResourceLocation, PerBlockConfig> perBlockConfigs;
-
-        if (configGson.blocks != null) {
-            final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> pbcs = ImmutableMap.builder();
-            configGson.blocks.forEach(bcg -> pbcs.put(
-                    ResourceLocation.parse(requireNonNull(bcg.blockId, "blockId is required")), createPerBlockConfig(bcg)));
-            perBlockConfigs = pbcs.build();
-        } else {
-            perBlockConfigs = null;
+            @Override
+            public void skipValue()  {
+                // GSon calls this to silently ignore json keys that don't bind to anything.  People then get
+                // confused about why their configuration isn't fully working.  So here we just fail loudly instead.
+                // Note we don't throw IOException because GSon tries to handle that in a ways that obscures the message.
+                throw new RuntimeException("Unexpected configuration names at: "+this.getPath());
+            }
         }
+        final HighspeedConfigGson configGson =
+                gson.fromJson(new TypoCatchingJsonReader(new StringReader(rawJson)), TypeToken.get(HighspeedConfigGson.class));
 
+        // load the default config
         final PerBlockConfig defaultConfig;
-        if (configGson.dflt != null) {
-            defaultConfig = createPerBlockConfig(configGson.dflt);
-        } else if (configGson.defaultSpeedLimit != null) {
-            // legacy support
-            defaultConfig = new PerBlockConfig(configGson.defaultSpeedLimit, null, null, null, null, null, null, null);
-        } else {
-            defaultConfig = null;
+        {
+            if (configGson.defaults != null) {
+                defaultConfig = createPerBlockConfig(configGson.defaults);
+            } else if (configGson.defaultSpeedLimit != null) {
+                // legacy support
+                defaultConfig = new PerBlockConfig(configGson.defaultSpeedLimit, null, null, null, null, null, null, null);
+            } else {
+                defaultConfig = null;
+            }
         }
 
-        // adjust logging to configured level
+        // load the per-block configs
+        final ImmutableMap<ResourceLocation, PerBlockConfig> perBlockConfigs;
+        {
+            if (configGson.blocks != null) {
+                final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> pbcs = ImmutableMap.builder();
+                configGson.blocks.forEach(bcg -> pbcs.put(
+                        ResourceLocation.parse(requireNonNull(bcg.blockId, "blockId is required")), createPerBlockConfig(bcg)));
+                perBlockConfigs = pbcs.build();
+            } else {
+                perBlockConfigs = null;
+            }
+        }
+
+        // assemble the final config object
         return new HighspeedConfig(
                 defaultConfig,
                 perBlockConfigs,
@@ -55,7 +77,7 @@ class HighspeedConfigParser {
         );
     }
 
-    private static PerBlockConfig createPerBlockConfig(PerBlockConfigGson blockGson) {
+    private static PerBlockConfig createPerBlockConfig(BlockConfigGson blockGson) {
         return new PerBlockConfig(
                 blockGson.maxSpeed,
                 blockGson.boostAmount1,
@@ -67,7 +89,6 @@ class HighspeedConfigParser {
                 blockGson.slowdownFactorEmpty
         );
     }
-
 
     // ===================================================================================
     // Private
@@ -86,9 +107,8 @@ class HighspeedConfigParser {
     // Gson object model
 
     public static class HighspeedConfigGson {
-        @SerializedName(value = "default")
-        PerBlockConfigGson dflt;
-        List<PerBlockConfigGson> blocks;
+        BlockConfigGson defaults;
+        List<BlockConfigGson> blocks;
         Boolean isSpeedometerEnabled;
         Boolean isTrueSpeedometerEnabled;
         Boolean isIceBoatsEnabled;
@@ -96,7 +116,7 @@ class HighspeedConfigParser {
         Boolean isExperimentalMovementForceEnabled;        ;
     }
 
-    public static class PerBlockConfigGson {
+    public static class BlockConfigGson {
         String blockId;
         @SerializedName(value = "maxSpeed", alternate = {"cartSpeed", "speedLimit"}) // alternates for backwards compat
         Integer maxSpeed;

@@ -57,7 +57,7 @@ public class HighspeedClientService implements ClientModInitializer {
             display = String.format("| %.1f bps |", speed);//, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
         } else {
             // not entirely clear why the -1 is necesary here but it makes the top speed line up with the maxSpeed
-            display = String.format("! %d bps |", Math.round(speed) - 1); //, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
+            display = String.format("| %d bps |", Math.round(speed) - 1); //, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
         }
         this.sendPlayerMessage(display);
     }

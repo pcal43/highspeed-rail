@@ -170,7 +170,7 @@ public class HighspeedService implements ModInitializer {
 
     private PerBlockConfig getPerBlockConfig(AbstractMinecart minecart, BlockPos minecartPos) {
         if (this.config.blockConfigs() == null) return this.config.defaultBlockConfig();
-        final BlockState underState = minecart.level().getBlockState(minecartPos);
+        final BlockState underState = minecart.level().getBlockState(minecartPos.below());
         final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
         final PerBlockConfig pbc = this.config.blockConfigs().get(underBlockId);
         return requireNonNullElse(pbc, this.config.defaultBlockConfig());
