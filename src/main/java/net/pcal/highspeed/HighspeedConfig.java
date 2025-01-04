@@ -1,19 +1,29 @@
 package net.pcal.highspeed;
 
-import java.util.List;
+import java.util.Map;
+
 import net.minecraft.resources.ResourceLocation;
 
 public record HighspeedConfig(
-        List<HighspeedBlockConfig> blockConfigs,
+        PerBlockConfig defaultBlockConfig,
+        Map<ResourceLocation, PerBlockConfig> blockConfigs,
         boolean isSpeedometerEnabled,
         boolean isTrueSpeedometerEnabled,
         boolean isIceBoatsEnabled,
-        Integer defaultSpeedLimit
+        boolean isNewMinecartPhysicsForceEnabled
 ) {
 
-    public record HighspeedBlockConfig(
-            ResourceLocation blockId,
-            Integer speedLimit
+    public record PerBlockConfig(
+            Integer oldMaxSpeed,
+            Integer maxSpeed,
+            Double boostFactor,
+            Double boostSlowFactor,
+            Double boostSlowThreshold,
+            Double haltThreshold,
+            Double haltFactor,
+            Double slowdownFactorOccupied,
+            Double slowdownFactorEmpty
     ) {
+
     }
 }

@@ -14,6 +14,7 @@ import net.pcal.highspeed.HighspeedClientService;
 import net.pcal.highspeed.HighspeedService;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -23,16 +24,29 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(OldMinecartBehavior.class)
 public abstract class OldMinecartBehaviorMixin {
 
+    @Unique
     private static final double VANILLA_MAX_SPEED = 8.0 / 20.0;
+
+    @Unique
     private static final double SQRT_TWO = 1.414213;
 
+    @Unique
     private BlockPos lastPos = null;
+
+    @Unique
     private double currentMaxSpeed = VANILLA_MAX_SPEED;
+
+    @Unique
     private double lastMaxSpeed = VANILLA_MAX_SPEED;
+
+    @Unique
     private Vec3 lastSpeedPos = null;
+
+    @Unique
     private long lastSpeedTime = 0;
-    private final OldMinecartBehavior minecartBehavior = (OldMinecartBehavior) (Object) this;
-    private final AbstractMinecart minecart = ((MinecartBehaviorAccessor) minecartBehavior).getMinecart();
+
+    // ===================================================================================
+    // Mixin methods
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
@@ -55,7 +69,12 @@ public abstract class OldMinecartBehaviorMixin {
         }
     }
 
+    // ===================================================================================
+    // Private
+
+    @Unique
     private double getModifiedMaxSpeed() {
+        final AbstractMinecart minecart = ((MinecartBehaviorAccessor) this).getMinecart();
         final BlockPos currentPos = minecart.blockPosition();
         if (currentPos.equals(lastPos)) return currentMaxSpeed;
         lastPos = currentPos;
@@ -74,9 +93,10 @@ public abstract class OldMinecartBehaviorMixin {
             } else {
                 final BlockState underState = minecart.level().getBlockState(currentPos.below());
                 final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
-                final Integer speedLimit = HighspeedService.getInstance().getSpeedLimit(underBlockId);
-                if (speedLimit != null) {
-                    return currentMaxSpeed = speedLimit / 20.0;
+                final Integer maxSpeed = HighspeedService.getInstance().getOldMaxSpeed(
+                        (OldMinecartBehavior) (Object) this, minecart, underBlockId);
+                if (maxSpeed != null) {
+                    return currentMaxSpeed = maxSpeed / 20.0;
                 } else {
                     return currentMaxSpeed = VANILLA_MAX_SPEED;
                 }
@@ -86,9 +106,11 @@ public abstract class OldMinecartBehaviorMixin {
         }
     }
 
+    @Unique
     private void clampVelocity() {
         if (getModifiedMaxSpeed() != lastMaxSpeed) {
             double smaller = Math.min(getModifiedMaxSpeed(), lastMaxSpeed);
+            final AbstractMinecart minecart = ((MinecartBehaviorAccessor) this).getMinecart();
             final Vec3 vel = minecart.getDeltaMovement();
             minecart.setDeltaMovement(new Vec3(Mth.clamp(vel.x, -smaller, smaller), 0.0,
                     Mth.clamp(vel.z, -smaller, smaller)));
@@ -96,6 +118,7 @@ public abstract class OldMinecartBehaviorMixin {
         lastMaxSpeed = currentMaxSpeed;
     }
 
+    @Unique
     private void updateSpeedometer() {
         final HighspeedService service = HighspeedService.getInstance();
         if (!service.isSpeedometerEnabled()) return;
