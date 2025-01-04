@@ -115,11 +115,11 @@ public class HighspeedService implements ModInitializer {
         if (blockState.is(Blocks.POWERED_RAIL) && (Boolean) blockState.getValue(PoweredRailBlock.POWERED)) {
             final PerBlockConfig pbc = this.getPerBlockConfig(minecart, blockPos);
             if (pbc == null) return null;
-            if (vec3.length() > requireNonNullElse(pbc.boostThreshold(), 0.01)) {
-                return vec3.normalize().scale(vec3.length() + requireNonNullElse(pbc.boostAmount1(), 0.06));
+            if (vec3.length() > requireNonNullElse(pbc.boostSlowThreshold(), 0.01)) {
+                return vec3.normalize().scale(vec3.length() + requireNonNullElse(pbc.boostFactor(), 0.06));
             } else {
                 Vec3 vec32 = minecart.getRedstoneDirection(blockPos);
-                return vec32.lengthSqr() <= (double) 0.0F ? vec3 : vec32.scale(vec3.length() + requireNonNullElse(pbc.boostAmount2(), 0.2));
+                return vec32.lengthSqr() <= (double) 0.0F ? vec3 : vec32.scale(vec3.length() + requireNonNullElse(pbc.boostSlowFactor(), 0.2));
             }
         } else {
             return vec3; // this would be the vanilla result
@@ -130,7 +130,7 @@ public class HighspeedService implements ModInitializer {
         if (blockState.is(Blocks.POWERED_RAIL) && !(Boolean) blockState.getValue(PoweredRailBlock.POWERED)) {
             final PerBlockConfig pbc = this.getPerBlockConfig(minecart);
             if (pbc == null) return null;
-            return vec3.length() < requireNonNullElse(pbc.haltThreshold(), 0.03) ? Vec3.ZERO : vec3.scale(requireNonNullElse(pbc.haltScale(), 0.5));
+            return vec3.length() < requireNonNullElse(pbc.haltThreshold(), 0.03) ? Vec3.ZERO : vec3.scale(requireNonNullElse(pbc.haltFactor(), 0.5));
         } else {
             return vec3;
         }

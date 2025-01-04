@@ -96,11 +96,11 @@ class HighspeedConfigParser {
         return new PerBlockConfig(
                 blockGson.oldMaxSpeed,
                 blockGson.maxSpeed,
-                blockGson.boostAmount1,
-                blockGson.boostAmount2,
-                blockGson.boostThreshold,
+                blockGson.boostFactor,
+                blockGson.boostSlowFactor,
+                blockGson.boostSlowThreshold,
                 blockGson.haltThreshold,
-                blockGson.haltScale,
+                blockGson.haltFactor,
                 blockGson.slowdownFactorOccupied,
                 blockGson.slowdownFactorEmpty
         );
@@ -111,11 +111,11 @@ class HighspeedConfigParser {
         return new PerBlockConfig(
                 elvis(overrides.oldMaxSpeed(), base.oldMaxSpeed()),
                 elvis(overrides.maxSpeed(), base.maxSpeed()),
-                elvis(overrides.boostAmount1(), base.boostAmount1()),
-                elvis(overrides.boostAmount2(), base.boostAmount2()),
-                elvis(overrides.boostThreshold(), base.boostThreshold()),
+                elvis(overrides.boostFactor(), base.boostFactor()),
+                elvis(overrides.boostSlowFactor(), base.boostSlowFactor()),
+                elvis(overrides.boostSlowThreshold(), base.boostSlowThreshold()),
                 elvis(overrides.haltThreshold(), base.haltThreshold()),
-                elvis(overrides.haltScale(), base.haltScale()),
+                elvis(overrides.haltFactor(), base.haltFactor()),
                 elvis(overrides.slowdownFactorOccupied(), base.slowdownFactorOccupied()),
                 elvis(overrides.slowdownFactorEmpty(), base.slowdownFactorEmpty())
         );
@@ -145,11 +145,11 @@ class HighspeedConfigParser {
         @SerializedName(value = "oldMaxSpeed", alternate = {"cartSpeed", "speedLimit"}) // alternates for backwards compat
         Integer oldMaxSpeed;
         Integer maxSpeed;
-        Double boostAmount1;
-        Double boostAmount2;
-        Double boostThreshold;
+        Double boostFactor;
+        Double boostSlowFactor;
+        Double boostSlowThreshold;
         Double haltThreshold;
-        Double haltScale;
+        Double haltFactor;
         Double slowdownFactorOccupied;
         Double slowdownFactorEmpty;
 

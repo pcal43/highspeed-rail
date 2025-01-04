@@ -16,11 +16,11 @@ public record HighspeedConfig(
     public record PerBlockConfig(
             Integer oldMaxSpeed,
             Integer maxSpeed,
-            Double boostAmount1,
-            Double boostAmount2,
-            Double boostThreshold,
+            Double boostFactor,
+            Double boostSlowFactor,
+            Double boostSlowThreshold,
             Double haltThreshold,
-            Double haltScale,
+            Double haltFactor,
             Double slowdownFactorOccupied,
             Double slowdownFactorEmpty
     ) {

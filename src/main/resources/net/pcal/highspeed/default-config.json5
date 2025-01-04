@@ -37,7 +37,12 @@
   'isNewMinecartPhysicsForceEnabled' : false,
 
   /**
-   * This section allows you to tweak the vanilla settings for
+   * The 'defaults' section allows you to tweak how minecarts behave by
+   * by default.  The values show in the file by default are the vanilla
+   * values.
+   *
+   * These values can also be changed based on the kind of block the minecart
+   * is travelling on (see the 'blocks' section below).
    */
   'defaults' : {
 
@@ -78,7 +83,7 @@
      * going in excess of 40,000 bps but have also led to game crashes.
      * Exceed 1000 at your own risk.
      */
-    'maxSpeed' : 223,
+    'maxSpeed' : 8,
 
     /**
      * Applies to the NEW physics model only.
@@ -87,7 +92,7 @@
      * Roughly speaking, doubling this value will result in doubling the
      * acceleration.  Changing this may lead to undesirable behavior.
      */
-    'boostAmount2' : 0.2,
+    'boostFactor' : 0.06,
 
     /**
      * Applies to the NEW physics model only.
@@ -106,8 +111,19 @@
     'slowdownFactorEmpty' : 0.975
   },
 
+ /**
+  * The 'blocks' section allows you to tweak how minecarts behave when
+  * travelling on top of specific block types.  Each item in the blocks'list
+  * must have a 'blockIds' field and can also have any of the settings
+  * documented above in the 'defaults' section.
+  */
   'blocks' : [
     {
+      /**
+       * A list of ids of the blocks that the settings apply to.  In this
+       * example, we increase the maximum minecart speed for rails that are
+       * built on top of gravel blocks.
+       */
       'blockIds': ['minecraft:gravel'],
       'oldMaxSpeed': 40,
       'maxSpeed': 200
