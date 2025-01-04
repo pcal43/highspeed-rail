@@ -24,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-import static java.util.Objects.deepEquals;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
@@ -70,7 +69,7 @@ public class HighspeedService implements ModInitializer {
             throw new RuntimeException(e);
         }
 
-        if (this.config.isExperimentalMovementForceEnabled()) {
+        if (this.config.isNewMinecartPhysicsForceEnabled()) {
             this.logger.warn("Experimental minecart movement is force-enabled.  This may cause unexpected behavior.");
         }
         if (INSTANCE != null) throw new IllegalStateException();
@@ -94,8 +93,8 @@ public class HighspeedService implements ModInitializer {
     // ===================================================================================
     // NewMinecartBehavior support
 
-    public boolean isExperimentalMovementForceEnabled() {
-        return this.config.isExperimentalMovementForceEnabled();
+    public boolean isNewMinecartPhysicsForceEnabled() {
+        return this.config.isNewMinecartPhysicsForceEnabled();
     }
 
     public Double getMaxSpeed(NewMinecartBehavior nmb, AbstractMinecart minecart) {

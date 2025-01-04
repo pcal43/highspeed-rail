@@ -25,16 +25,16 @@
 
   /**
    * Setting this to true will force the new minecart physics to be enabled
-   * for *all* worlds, even if they were created without the experimental
+   * for *all* worlds, even those that were created without the experimental
    * 'Minecart Improvements' enabled.  As of Minecraft 1.24.3, the new physics
-   * model is experimental and may result in unexpected behavior on older
-   * worlds.
+   * model is experimental and may result in unexpected behavior.
    *
-   * It's highly unlikely this could cause world corruption, and the new
-   * physics model is vastly better than the old, so you'll probably like
-   * the results of turning this on.  Nonetheless, you do so at your own risk.
+   * The new physics model is vastly better than the old, and it's pretty
+   * unlikely that this could cause world corruption, so you'll probably be
+   * happy with the results of turning this on.  Nonetheless, you do so at
+   * your own risk.
    */
-  'isExperimentalMovementForceEnabled' : false,
+  'isNewMinecartPhysicsForceEnabled' : false,
 
   /**
    * This section allows you to tweak the vanilla settings for
@@ -78,7 +78,7 @@
      * going in excess of 40,000 bps but have also led to game crashes.
      * Exceed 1000 at your own risk.
      */
-    'maxSpeed' : 8,
+    'maxSpeed' : 223,
 
     /**
      * Applies to the NEW physics model only.
@@ -103,7 +103,7 @@
      * Sets the scaling factor used to decelerate unoccupied minecarts.
      * Changing this may lead to undesirable behavior.
      */
-    'slowdownFactorEmpty' : 0.975,
+    'slowdownFactorEmpty' : 0.975
   },
 
   'blocks' : [
@@ -148,6 +148,5 @@
    * ice boats to ground speed
    */
   'isIceBoatsEnabled'        : false
-
 
 }

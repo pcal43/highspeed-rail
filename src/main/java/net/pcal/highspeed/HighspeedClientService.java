@@ -53,11 +53,14 @@ public class HighspeedClientService implements ClientModInitializer {
         final int TICKS_PER_LERP = 3; //??
         double speed = distanceTraveled * 20 / TICKS_PER_LERP;
         final String display;
+        // FIXME I don't understand what is going on with subtracting 1.20 here, but doing so makes it always align with
+        // the nominal maxSpeed.
+        speed = Math.max(0, speed - 1.20);
         if (speed < 10) {
             display = String.format("| %.1f bps |", speed);//, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
         } else {
             // not entirely clear why the -1 is necesary here but it makes the top speed line up with the maxSpeed
-            display = String.format("| %d bps |", Math.round(speed) - 1); //, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
+            display = String.format("| %d bps |", Math.round(speed)); //, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
         }
         this.sendPlayerMessage(display);
     }

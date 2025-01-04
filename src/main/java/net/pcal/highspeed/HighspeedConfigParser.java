@@ -84,7 +84,7 @@ class HighspeedConfigParser {
                 requireNonNullElse(configGson.isSpeedometerEnabled,true),
                 requireNonNullElse(configGson.isTrueSpeedometerEnabled, false),
                 requireNonNullElse(configGson.isIceBoatsEnabled, false),
-                requireNonNullElse(configGson.isExperimentalMovementForceEnabled, false)
+                requireNonNullElse(configGson.isNewMinecartPhysicsForceEnabled, false)
         );
     }
 
@@ -134,7 +134,7 @@ class HighspeedConfigParser {
         Boolean isSpeedometerEnabled;
         Boolean isTrueSpeedometerEnabled;
         Boolean isIceBoatsEnabled;
-        Boolean isExperimentalMovementForceEnabled;
+        Boolean isNewMinecartPhysicsForceEnabled;
 
         @Deprecated // supports older configs, use defaults/maxSpeed going forward
         Integer defaultSpeedLimit;

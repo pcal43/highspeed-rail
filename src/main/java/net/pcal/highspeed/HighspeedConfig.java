@@ -10,7 +10,7 @@ public record HighspeedConfig(
         boolean isSpeedometerEnabled,
         boolean isTrueSpeedometerEnabled,
         boolean isIceBoatsEnabled,
-        boolean isExperimentalMovementForceEnabled
+        boolean isNewMinecartPhysicsForceEnabled
 ) {
 
     public record PerBlockConfig(

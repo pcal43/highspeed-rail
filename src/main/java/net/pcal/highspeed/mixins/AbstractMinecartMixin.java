@@ -13,6 +13,6 @@ public class AbstractMinecartMixin {
 
     @Inject(method = "useExperimentalMovement", at = @At("HEAD"), cancellable = true)
     private static void mf_useExperimentalMovement(Level level, CallbackInfoReturnable<Boolean> cir) {
-        if (HighspeedService.getInstance().isExperimentalMovementForceEnabled()) cir.setReturnValue(true);
+        if (HighspeedService.getInstance().isNewMinecartPhysicsForceEnabled()) cir.setReturnValue(true);
     }
 }
