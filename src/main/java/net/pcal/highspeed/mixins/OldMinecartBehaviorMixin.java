@@ -45,12 +45,6 @@ public abstract class OldMinecartBehaviorMixin {
     @Unique
     private long lastSpeedTime = 0;
 
-    @Unique
-    private final OldMinecartBehavior minecartBehavior = (OldMinecartBehavior) (Object) this;
-
-    @Unique
-    private final AbstractMinecart minecart = ((MinecartBehaviorAccessor) minecartBehavior).getMinecart();
-
     // ===================================================================================
     // Mixin methods
 
@@ -80,6 +74,7 @@ public abstract class OldMinecartBehaviorMixin {
 
     @Unique
     private double getModifiedMaxSpeed() {
+        final AbstractMinecart minecart = ((MinecartBehaviorAccessor) this).getMinecart();
         final BlockPos currentPos = minecart.blockPosition();
         if (currentPos.equals(lastPos)) return currentMaxSpeed;
         lastPos = currentPos;
@@ -115,6 +110,7 @@ public abstract class OldMinecartBehaviorMixin {
     private void clampVelocity() {
         if (getModifiedMaxSpeed() != lastMaxSpeed) {
             double smaller = Math.min(getModifiedMaxSpeed(), lastMaxSpeed);
+            final AbstractMinecart minecart = ((MinecartBehaviorAccessor) this).getMinecart();
             final Vec3 vel = minecart.getDeltaMovement();
             minecart.setDeltaMovement(new Vec3(Mth.clamp(vel.x, -smaller, smaller), 0.0,
                     Mth.clamp(vel.z, -smaller, smaller)));

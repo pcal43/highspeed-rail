@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
+import static java.util.Objects.deepEquals;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
@@ -173,6 +174,6 @@ public class HighspeedService implements ModInitializer {
         final BlockState underState = minecart.level().getBlockState(minecartPos.below());
         final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
         final PerBlockConfig pbc = this.config.blockConfigs().get(underBlockId);
-        return requireNonNullElse(pbc, this.config.defaultBlockConfig());
+        return pbc != null ? pbc :  this.config.defaultBlockConfig();
     }
 }
