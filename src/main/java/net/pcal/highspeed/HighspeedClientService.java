@@ -7,14 +7,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
 import net.minecraft.world.phys.Vec3;
-import net.pcal.highspeed.mixins.MinecartBehaviorAccessor;
 
 import static java.util.Objects.requireNonNull;
 
 public class HighspeedClientService implements ClientModInitializer {
 
+    private static final int SPEEDOMETER_REFRESH_FREQUENCY = 4; // in ticks
     private int speedometerRefresh = 0;
-
 
     @Override
     public void onInitializeClient() {
@@ -38,7 +37,7 @@ public class HighspeedClientService implements ClientModInitializer {
 
     public void updateSpeedometer(final NewMinecartBehavior nmb, final AbstractMinecart minecart) {
         if (!this.isPlayerRiding(minecart)) return;
-        if (speedometerRefresh++ < 5) return;
+        if (speedometerRefresh++ < SPEEDOMETER_REFRESH_FREQUENCY) return;
         speedometerRefresh = 0;
         double distanceTraveled = 0;
         if (nmb.oldLerp != null && nmb.currentLerpSteps.size() > 2) {
@@ -53,9 +52,15 @@ public class HighspeedClientService implements ClientModInitializer {
         }
         final int TICKS_PER_LERP = 3; //??
         double speed = distanceTraveled * 20 / TICKS_PER_LERP;
-        speed -= 1.2; // WTF IS THIS
+        //speed -= 1.2; // WTF IS THIS
         //nominalSpeed -= ((currentLerpSteps.size()) / currentLerpStepsTotalWeight); // WTF IS THIS
-        String display = String.format("! %.2f bps ! lerps:%d weight:%.2f", speed, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
+        final String display;
+        if (speed < 10) {
+            display = String.format("! %.1f bps |", speed);//, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
+        } else {
+            // not entirely clear why the -1 is necesary here but it makes the top speed line up with the maxSpeed
+            display = String.format("! %d bps |", Math.round(speed) - 1); //, nmb.currentLerpSteps.size(), nmb.currentLerpStepsTotalWeight);
+        }
         this.sendPlayerMessage(display);
     }
 }
