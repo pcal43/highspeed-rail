@@ -24,16 +24,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(OldMinecartBehavior.class)
 public abstract class OldMinecartBehaviorMixin {
 
+    @Unique
     private static final double VANILLA_MAX_SPEED = 8.0 / 20.0;
+
+    @Unique
     private static final double SQRT_TWO = 1.414213;
 
+    @Unique
     private BlockPos lastPos = null;
+
+    @Unique
     private double currentMaxSpeed = VANILLA_MAX_SPEED;
+
+    @Unique
     private double lastMaxSpeed = VANILLA_MAX_SPEED;
+
+    @Unique
     private Vec3 lastSpeedPos = null;
+
+    @Unique
     private long lastSpeedTime = 0;
+
+    @Unique
     private final OldMinecartBehavior minecartBehavior = (OldMinecartBehavior) (Object) this;
+
+    @Unique
     private final AbstractMinecart minecart = ((MinecartBehaviorAccessor) minecartBehavior).getMinecart();
+
+    // ===================================================================================
+    // Mixin methods
 
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
@@ -56,6 +75,9 @@ public abstract class OldMinecartBehaviorMixin {
         }
     }
 
+    // ===================================================================================
+    // Private
+
     @Unique
     private double getModifiedMaxSpeed() {
         final BlockPos currentPos = minecart.blockPosition();
@@ -76,9 +98,10 @@ public abstract class OldMinecartBehaviorMixin {
             } else {
                 final BlockState underState = minecart.level().getBlockState(currentPos.below());
                 final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
-                final Integer speedLimit = HighspeedService.getInstance().getSpeedLimit(underBlockId);
-                if (speedLimit != null) {
-                    return currentMaxSpeed = speedLimit / 20.0;
+                final Integer maxSpeed = HighspeedService.getInstance().getMaxSpeed(
+                        (OldMinecartBehavior) (Object) this, minecart, underBlockId);
+                if (maxSpeed != null) {
+                    return currentMaxSpeed = maxSpeed / 20.0;
                 } else {
                     return currentMaxSpeed = VANILLA_MAX_SPEED;
                 }

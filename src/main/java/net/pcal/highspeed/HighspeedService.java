@@ -1,6 +1,5 @@
 package net.pcal.highspeed;
 
-import com.google.common.collect.ImmutableMap;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -13,11 +12,10 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Map;
 
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.entity.vehicle.OldMinecartBehavior;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,9 +36,6 @@ public class HighspeedService implements ModInitializer {
     private static HighspeedService INSTANCE = null;
     private HighspeedConfig config;
     private HighspeedClientService clientService;
-    private Map<ResourceLocation, PerBlockConfig> perBlockConfigs;
-    @Deprecated
-    private Map<ResourceLocation, Integer> speedLimitPerBlock;
 
     private final Logger logger = LogManager.getLogger("HighspeedRail");
 
@@ -75,18 +70,6 @@ public class HighspeedService implements ModInitializer {
             throw new RuntimeException(e);
         }
 
-        {
-            final ImmutableMap.Builder<ResourceLocation, Integer> b = ImmutableMap.builder();
-            this.config.blockConfigs().forEach(bc -> b.put(bc.blockId(), bc.speedLimit()));
-            this.speedLimitPerBlock = b.build();
-        }
-
-        {
-            final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> b = ImmutableMap.builder();
-            this.config.blockConfigs().forEach(bc -> b.put(bc.blockId(), bc));
-            this.perBlockConfigs = b.build();
-        }
-
         if (this.config.isExperimentalMovementForceEnabled()) {
             this.logger.warn("Experimental minecart movement is force-enabled.  This may cause unexpected behavior.");
         }
@@ -108,8 +91,9 @@ public class HighspeedService implements ModInitializer {
      *
      * FIXME this should be a Double.
      */
-    public Integer getSpeedLimit(ResourceLocation blockId) {
-        return this.speedLimitPerBlock.getOrDefault(blockId, this.config.defaultSpeedLimit());
+    public Integer getMaxSpeed(OldMinecartBehavior omb, AbstractMinecart minecart, ResourceLocation blockId) {
+        final PerBlockConfig pbc = this.getPerBlockConfig(minecart);
+        return pbc == null ? null : pbc.maxSpeed();
     }
 
     public boolean isSpeedometerEnabled() {
@@ -182,6 +166,7 @@ public class HighspeedService implements ModInitializer {
     private PerBlockConfig getPerBlockConfig(AbstractMinecart minecart, BlockPos minecartPos) {
         final BlockState underState = minecart.level().getBlockState(minecartPos);
         final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
-        return this.perBlockConfigs.get(underBlockId);
+        final PerBlockConfig pbc = this.config.blockConfigs().get(underBlockId);
+        return requireNonNullElse(pbc, this.config.defaultBlockConfig());
     }
 }

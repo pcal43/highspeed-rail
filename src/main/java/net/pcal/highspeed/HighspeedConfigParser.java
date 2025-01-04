@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
@@ -22,21 +19,27 @@ import static java.util.Objects.requireNonNullElse;
 class HighspeedConfigParser {
 
     static HighspeedConfig parse(final InputStream in) throws IOException {
-        final List<PerBlockConfig> blocks = new ArrayList<>();
         final String rawJson = stripComments(new String(in.readAllBytes(), StandardCharsets.UTF_8));
         final Gson gson = new Gson();
         final HighspeedConfigGson configGson = gson.fromJson(rawJson, HighspeedConfigGson.class);
-        for (final PerBlockConfigGson blockGson : configGson.blocks) {
-            blocks.add(createPerBlockConfig(blockGson));
+        final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> pbcs = ImmutableMap.builder();
+        configGson.blocks.forEach(bcg -> pbcs.put(
+                ResourceLocation.parse(requireNonNull(bcg.blockId, "blockId is required")), createPerBlockConfig(bcg)));
+
+        final PerBlockConfig defaultConfig;
+        if (configGson.dflt != null) {
+            defaultConfig = createPerBlockConfig(configGson.dflt);
+        } else if (configGson.defaultSpeedLimit != null) {
+            // legacy support
+            defaultConfig = new PerBlockConfig(configGson.defaultSpeedLimit, null, null, null, null, null, null, null);
+        } else {
+            defaultConfig = null;
         }
-        final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> b = ImmutableMap.builder();
-        configGson.blocks.forEach(bcg -> b.put(bcg.blockId, createPerBlockConfig(bcg));
-        Map<ResourceLocation, PerBlockConfig> perBlockConfigs = b.build();
 
         // adjust logging to configured level
         return new HighspeedConfig(
-                null,
-                perBlockConfigs,
+                defaultConfig,
+                pbcs.build(),
                 requireNonNullElse(configGson.isSpeedometerEnabled,true),
                 requireNonNullElse(configGson.isTrueSpeedometerEnabled, false),
                 requireNonNullElse(configGson.isIceBoatsEnabled, false),
@@ -59,7 +62,7 @@ class HighspeedConfigParser {
 
 
     // ===================================================================================
-    // Private methods
+    // Private
 
     private static String stripComments(String json) throws IOException {
         final StringBuilder out = new StringBuilder();
@@ -87,7 +90,6 @@ class HighspeedConfigParser {
 
     public static class PerBlockConfigGson {
         String blockId;
-
         @SerializedName(value = "maxSpeed", alternate = {"cartSpeed", "speedLimit"}) // alternates for backwards compat
         Integer maxSpeed;
         Double boostAmount1;
