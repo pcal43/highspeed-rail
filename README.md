@@ -28,15 +28,16 @@ Then this is the mod for you!
 * Optional minecart speedometer
 * Optional nerf for ice boats (boats on ice move the same as on land)
 
-
 ## Notes
+
+* The speedometer and ice boat nerf can be turned off in the config file.
+* I will not be doing a Forge port of High-Speed Rail.
+
+## Notes (for old minecart physics only)
 
 * The speed-up does not work on *any* curved tracks, including 'diagonal' sections.
 * Top speed is increased but not acceleration.  Use more powered rails to go faster.
 * Speed is capped at 78 blocks-per-minute.
-* The speedometer and ice boat nerf can be turned off in the config file.
-* I will not be doing a Forge port of High-Speed Rail.
-
 
 ## Credits
 
@@ -44,7 +45,6 @@ Then this is the mod for you!
 * And also [Gravel Carts](https://modrinth.com/mod/gravel_carts) which is great mod that implements the same idea a bit differently
 * Idea for disabling ice boats borrowed from [Ice Boat Nerf](https://www.curseforge.com/minecraft/mc-mods/ice-boat-nerf)
 * Idea for speedometer borrowed from [Speedometer](https://www.curseforge.com/minecraft/mc-mods/speedometer)
-
 
 ## Legal
 
