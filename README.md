@@ -8,10 +8,10 @@ Just build your rails on gravel blocks and your minecarts will go the same speed
 
 ## New Features! (as of version `0.12.0+1.21.3`)
 * Support has been added for the new experimental minecart physics.
-* You can break the 1000 block-per-second gamerule limit!
-* Change acceleration and deceleration rates as well.
-* `minecartMaxSpeed` game rule on a per-block basis.
-  * Building your tracks on diamond blocks?  Go 25k bps!
+* You can break the 1000 block-per-second limit on the `minecartMaxSpeed` gamerule!
+* You can change acceleration and deceleration rates as well.
+* Minecart behaviors can be set on a per-block basis.
+    * Building your tracks on diamond blocks?  Go 25k bps!
 * Force new minecart physics to be enabled in old worlds.
 * Accurate speedometer with physics model at any speed.
 
