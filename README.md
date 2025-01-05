@@ -1,10 +1,12 @@
 # High-Speed Rail
 
-Do you think Ice Boats are ridiculous?  Do you wish minecarts were a viable form of transportation?  Then this is the mod for you!
+* Do you think Ice Boats are ridiculous? 
+* Do you wish minecarts were a viable form of transportation?  
+* Do you want to push the new minecart physics to absurd limits?
 
-Just build your rails on gravel blocks and your minecarts will go the same speed as ice boats.
+Then this is the mod for you!
 
-![](https://github.com/pcal43/highspeed-rail/blob/main/etc/screenshot-40bps-small.png?raw=true)
+![](https://github.com/pcal43/highspeed-rail/blob/main/etc/screenshot-25kbps-small.png?raw=true)
 
 ## New Features! (as of version `0.12.0+1.21.3`)
 * Support has been added for the new experimental minecart physics.
@@ -18,6 +20,7 @@ Just build your rails on gravel blocks and your minecarts will go the same speed
 ## Features
 
 * **Fast Minecarts.**  Why settle for 8 blocks-per-second?  Go 40, 50, 60 bps or more!
+  * or enable the new Minecart physics and go thousands of blocks-per-second 
 * **Fully customizable.**  Configure different speed boosts for different blocks.
 * **No derailing.** Minecarts automatically reduce to normal speed on curves.
 * **Serverside-only.**  Clients do not need to install the mod.
