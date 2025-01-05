@@ -6,6 +6,15 @@ Just build your rails on gravel blocks and your minecarts will go the same speed
 
 ![](https://github.com/pcal43/highspeed-rail/blob/main/etc/screenshot-40bps-small.png?raw=true)
 
+## New Features! (as of version `0.12.0+1.21.3`)
+* Support has been added for the new experimental minecart physics.
+* You can break the 1000 block-per-second gamerule limit!
+* Change acceleration and deceleration rates as well.
+* `minecartMaxSpeed` game rule on a per-block basis.
+  * Building your tracks on diamond blocks?  Go 25k bps!
+* Force new minecart physics to be enabled in old worlds.
+* Accurate speedometer with physics model at any speed.
+
 ## Features
 
 * **Fast Minecarts.**  Why settle for 8 blocks-per-second?  Go 40, 50, 60 bps or more!
