@@ -65,6 +65,7 @@ public class HighspeedService implements ModInitializer {
         }
         try (final InputStream in = new FileInputStream(CONFIG_FILE_PATH.toFile())) {
             this.config = HighspeedConfigParser.parse(in);
+            this.logger.info("Configuration loaded from " + CONFIG_FILE_PATH.toAbsolutePath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
