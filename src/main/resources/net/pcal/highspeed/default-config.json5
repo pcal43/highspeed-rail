@@ -1,40 +1,184 @@
-// NOTE: This is not actually json5 - it's parsed with minecraft's built-in json parser but with
-// some preprocessing to allow for '//' -style comments like this one.  The lie in the .json5
-// extension just helps text editors deal with it.
+/**
+ * Config file for Highspeed Rail:
+ *  https://modrinth.com/mod/highspeed-rail
+ *
+ * This default configuration file sets your world up to have fast minecarts
+ * when the rails are built on gravel blocks.  In normal worlds, minecarts
+ * on gravel will travel up to 40 blocks-per-second; in worlds with the
+ * experimental 'Minecart Improvements' enabled, carts on gravel will travel
+ * at 200 blocks-per-second.
+ *
+ * There's a lot you can tweak here, though, so read on.
+ *
+ *
+ * MINECART PHYSICS MODELS
+ *
+ * The mod supports both the classic minecart physics model as well as the
+ * new experimental model introduced in minecraft 1.21.3.  Some config
+ * settings only apply to the new physics model.  The mod provides an option
+ * to enable the new model even in old worlds.
+ *
+ *
+ * EDITING AND MANAGING THIS FILE
+ *
+ * That this file is not actually json5 - it's parsed with minecraft's
+ * built-in json parser in lenient mode, mainly to make it ignore comments
+ * like this one.  The lie with the .json5 extension just helps text editors
+ * happy.
+ *
+ * The default config file will automatically get created during Minecraft
+ * startup if it doesn't exist.  If you get stuck with configuration errors,
+ * you can start over by renaming this file to 'highspeed-rail.json5.old'
+ * and then restarting Minecraft.
+
+ * The configuration format sometimes changes with new versions of the mod.
+ * Reasonable efforts are made to preserve backwards compatibility.  But you
+ * may want to regenerate the default config after updating if you run into
+ * problems or want to take advantage of new features.
+ */
+
 {
 
-  // Sets the maximum speed (in blocks-per-second) for carts travelling on specific blocks.  The speedLimit in
-  // Vanilla is 8.
+  /**
+   * Setting this to true will force the new minecart physics to be enabled
+   * for *all* worlds, even those that were created without the experimental
+   * 'Minecart Improvements' enabled.  As of Minecraft 1.24.3, the new physics
+   * model is experimental and may result in unexpected behavior.
+   *
+   * The new physics model is vastly better than the old, and it's pretty
+   * unlikely that this could cause world corruption, so you'll probably be
+   * happy with the results of turning this on.  Nonetheless, you do so at
+   * your own risk.
+   */
+  'isNewMinecartPhysicsForceEnabled' : false,
+
+  /**
+   * The 'defaults' section allows you to tweak how minecarts behave by
+   * by default.  The values show in the file by default are the vanilla
+   * values.
+   *
+   * These values can also be changed based on the kind of block the minecart
+   * is travelling on (see the 'blocks' section below).
+   */
+  'defaults' : {
+
+    /**
+     * Applies to the OLD physics model only.
+     *
+     * Sets the default maximum speed for worlds using the OLD physics model,
+     * expressed in blocks-per-second.  The value must be an integer.
+     *
+     * The default vanilla value is 8.  The practical upper bound on this
+     * value is about 78, due to limitations in the old model.
+     *
+     * Note that this does not increase the acceleration rate; it only
+     * increases top speed.
+     *
+     * If you change this, you should also configure at least one kind of
+     * block to maintain Vanilla speed (i.e.,by setting 'speedLimit' for a
+     * block to be 8 (or null) in the 'blocks' section above).  Experience
+     * shows that carts can derail or reverse unexpectedly in certain
+     * situations when travelling above the Vanilla speed limit, so you'll
+     * want to have at least one block type that can act as a 'brake.'
+     */
+    'oldMaxSpeed' : 8,
+
+
+    /**
+     * Applies to the NEW physics model only.
+     *
+     * Sets the default maximum speed for worlds using the NEW physics model,
+     * expressed in blocks-per-second (bps).  The value must be an integer.     .
+     *
+     * The default vanilla value is 8 but can be changed with the
+     * 'minecartMaxSpeed' gamerule.  This configuration setting overrides
+     * the gamerule setting.
+     *
+     * Unlike the gamerule, which has an upper bound of 1000, this setting
+     * can be made as high as you want.  Experiments have had minecarts
+     * going in excess of 40,000 bps but have also led to game crashes.
+     * Exceed 1000 at your own risk.
+     */
+    'maxSpeed' : 8,
+
+    /**
+     * Applies to the NEW physics model only.
+     *
+     * Sets the scaling factor used to accelerate minecarts on powered rails.
+     * Roughly speaking, doubling this value will result in doubling the
+     * acceleration.  Changing this may lead to undesirable behavior.
+     */
+    'boostFactor' : 0.06,
+
+    /**
+     * Applies to the NEW physics model only.
+     *
+     * Sets the scaling factor used to decelerate occupied minecarts.
+     * Changing this may lead to undesirable behavior.
+     */
+    'slowdownFactorOccupied' : 0.997,
+
+    /**
+     * Applies to the NEW physics model only.
+     *
+     * Sets the scaling factor used to decelerate unoccupied minecarts.
+     * Changing this may lead to undesirable behavior.
+     */
+    'slowdownFactorEmpty' : 0.975
+  },
+
+ /**
+  * The 'blocks' section allows you to tweak how minecarts behave when
+  * travelling on top of specific block types.  Each item in the blocks'list
+  * must have a 'blockIds' field and can also have any of the settings
+  * documented above in the 'defaults' section.
+  */
   'blocks' : [
     {
-      'blockId': 'minecraft:gravel',
-      'speedLimit': 40
+      /**
+       * A list of ids of the blocks that the settings apply to.  In this
+       * example, we increase the maximum minecart speed for rails that are
+       * built on top of gravel blocks.
+       */
+      'blockIds': ['minecraft:gravel'],
+      'oldMaxSpeed': 40,
+      'maxSpeed': 200
     },
     {
-      'blockId': 'minecraft:slime_block',
-      'speedLimit': 4
+      'blockIds': ['minecraft:slime_block'],
+      'oldMaxSpeed': 4,
+      'maxSpeed' : 4
     }
   ],
 
-  // Sets the default maximum speed for blocks not configured above.  A value of 'null' here means to use the
-  // Vanilla speedLimit (8).
-  //
-  // If you change this, you should also configure at least one kind of block to maintain Vanilla speed (i.e.,
-  // by setting 'speedLimit' for a block to be 8 (or null) in the 'blocks' section above).  Experience shows that
-  // carts can derail or reverse unexpectedly in certain situations when travelling above the Vanilla speed limit,
-  // so you'll want to have at least one block type that can act as a 'brake.'
-  'defaultSpeedLimit'        : null,
 
-  // Whether a speedometer should be displayed when you get in a minecart.  The mod must be installed on the client
-  // in order for this to work.
+  /**
+   * Applies to both the NEW and OLD physics models.  Mod must be installed
+   * on the client.
+   *
+   * Whether a speedometer should be displayed when you get in a minecart.
+   */
   'isSpeedometerEnabled'     : true,
 
-  // Whether the 'true' speed should also be displayed on the speedometer.  The default speedometer just shows your
-  // approximate speed; this precisely measures distance travelled every tick.  It's more resource-intensive
-  // and also flickers sort of annoyingly, so disabled by default.  There's usually not much difference, anyway.
+  /**
+   * Applies to both the OLD physics model only.  Mod must be installed
+   * on the client.
+   *
+   * Whether the 'true' speed should also be displayed on the speedometer.
+   * The default speedometer just shows your approximate speed; this precisely
+   * measures distance travelled every tick.  It's more resource-intensive
+   * and also flickers sort of annoyingly, so disabled by default.  There's
+   * usually not much difference, anyway.
+   */
   'isTrueSpeedometerEnabled' : false,
 
-  // Whether Vanilla ice boats should be allowed.  Set to 'false' to limit ice boats to ground speed; 'true'
-  // The mod must be installed on the client for this to work.
+  /**
+   * Applies to both the NEW and OLD physics models.  Mod must be installed
+   * on the client.
+   *
+   * Whether Vanilla ice boats should be allowed.  Set to 'false' to limit
+   * ice boats to ground speed
+   */
   'isIceBoatsEnabled'        : false
+
 }
