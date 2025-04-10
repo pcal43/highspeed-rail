@@ -88,7 +88,7 @@
      * Applies to the NEW physics model only.
      *
      * Sets the default maximum speed for worlds using the NEW physics model,
-     * expressed in blocks-per-second (bps).  The value must be an integer.     .
+     * expressed in blocks-per-second (bps).  The value must be an integer.
      *
      * The default vanilla value is 8 but can be changed with the
      * 'minecartMaxSpeed' gamerule.  This configuration setting overrides
