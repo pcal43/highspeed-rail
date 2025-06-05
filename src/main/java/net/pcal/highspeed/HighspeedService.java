@@ -166,7 +166,7 @@ public class HighspeedService implements ModInitializer {
     // Private
 
     private PerBlockConfig getPerBlockConfig(AbstractMinecart minecart) {
-        return getPerBlockConfig(minecart, minecart.blockPosition());
+        return getPerBlockConfig(minecart, minecart.getCurrentBlockPosOrRailBelow());
     }
 
     private PerBlockConfig getPerBlockConfig(AbstractMinecart minecart, BlockPos minecartPos) {
