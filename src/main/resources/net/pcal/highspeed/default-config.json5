@@ -42,7 +42,7 @@
   /**
    * Setting this to true will force the new minecart physics to be enabled
    * for *all* worlds, even those that were created without the experimental
-   * 'Minecart Improvements' enabled.  As of Minecraft 1.24.3, the new physics
+   * 'Minecart Improvements' enabled.  As of Minecraft 1.21.2, the new physics
    * model is experimental and may result in unexpected behavior.
    *
    * The new physics model is vastly better than the old, and it's pretty
