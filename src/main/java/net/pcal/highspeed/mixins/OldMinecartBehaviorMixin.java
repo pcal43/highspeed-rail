@@ -123,7 +123,7 @@ public abstract class OldMinecartBehaviorMixin {
         final HighspeedService service = HighspeedService.getInstance();
         if (!service.isSpeedometerEnabled()) return;
         final AbstractMinecart minecart = ((MinecartBehaviorAccessor) (OldMinecartBehavior) (Object) this).getMinecart();
-        if (!minecart.level().isClientSide) return;
+        if (!minecart.level().isClientSide()) return;
         final HighspeedClientService client = service.getClientService();
         if (!client.isPlayerRiding(minecart)) return;
         final double override = getModifiedMaxSpeed();
