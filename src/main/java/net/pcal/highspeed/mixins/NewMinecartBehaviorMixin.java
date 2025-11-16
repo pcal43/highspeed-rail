@@ -1,5 +1,6 @@
 package net.pcal.highspeed.mixins;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
@@ -8,7 +9,9 @@ import net.minecraft.world.phys.Vec3;
 import net.pcal.highspeed.HighspeedService;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -40,15 +43,37 @@ public abstract class NewMinecartBehaviorMixin {
         if (customSlowdownFactor != null) cir.setReturnValue(customSlowdownFactor);
     }
 
-    @Inject(method = "calculateBoostTrackSpeed", at = @At("HEAD"), cancellable = true)
-    private void calculateBoostTrackSpeed(Vec3 vec3, BlockPos blockPos, BlockState blockState,  CallbackInfoReturnable<Vec3> cir) {
-        final Vec3 customBoostSpeed = HighspeedService.getInstance().calculateBoostTrackSpeed(
-                (NewMinecartBehavior) (Object)this, ((MinecartBehaviorAccessor) this).getMinecart(), vec3, blockPos, blockState
+    @ModifyConstant(
+        method = "calculateBoostTrackSpeed",
+        constant = @Constant(doubleValue = 0.01)
+    )
+    private double boostSlowThreshold(double defaultValue, @Local(argsOnly = true) BlockPos blockPos) {
+        return HighspeedService.getInstance().calculateBoostSlowThreshold(
+            defaultValue, ((MinecartBehaviorAccessor) this).getMinecart(), blockPos
         );
-        if (customBoostSpeed != null) cir.setReturnValue(customBoostSpeed);
     }
 
-    @Inject(method = "calculateHaltTrackSpeed", at = @At("HEAD"), cancellable = true)
+    @ModifyConstant(
+        method = "calculateBoostTrackSpeed",
+        constant = @Constant(doubleValue = 0.06)
+    )
+    private double boostFactor(double defaultValue, @Local(argsOnly = true) BlockPos blockPos) {
+        return HighspeedService.getInstance().calculateBoostFactor(
+            defaultValue, ((MinecartBehaviorAccessor) this).getMinecart(), blockPos
+        );
+    }
+
+    @ModifyConstant(
+        method = "calculateBoostTrackSpeed",
+        constant = @Constant(doubleValue = 0.2)
+    )
+    private double boostSlowFactor(double defaultValue, @Local(argsOnly = true) BlockPos blockPos) {
+        return HighspeedService.getInstance().calculateBoostSlowFactor(
+            defaultValue, ((MinecartBehaviorAccessor) this).getMinecart(), blockPos
+        );
+    }
+
+    @Inject(method = "calculateHaltTrackSpeed", at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/world/phys/Vec3;length()D"), cancellable = true)
     private void calculateHaltTrackSpeed(Vec3 vec3, BlockState blockState, CallbackInfoReturnable<Vec3> cir) {
         final Vec3 customHaltSpeed = HighspeedService.getInstance().calculateHaltTrackSpeed(
                 (NewMinecartBehavior) (Object)this, ((MinecartBehaviorAccessor) this).getMinecart(), vec3, blockState

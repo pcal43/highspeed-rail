@@ -15,8 +15,6 @@ import java.nio.file.StandardCopyOption;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
 import net.minecraft.world.entity.vehicle.OldMinecartBehavior;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.PoweredRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.pcal.highspeed.HighspeedConfig.PerBlockConfig;
@@ -112,29 +110,28 @@ public class HighspeedService implements ModInitializer {
                 requireNonNullElse(pbc.slowdownFactorEmpty(), 0.975);
     }
 
-    public Vec3 calculateBoostTrackSpeed(NewMinecartBehavior nmb, AbstractMinecart minecart, Vec3 vec3, BlockPos blockPos, BlockState blockState) {
-        if (blockState.is(Blocks.POWERED_RAIL) && (Boolean) blockState.getValue(PoweredRailBlock.POWERED)) {
-            final PerBlockConfig pbc = this.getPerBlockConfig(minecart, blockPos);
-            if (pbc == null) return null;
-            if (vec3.length() > requireNonNullElse(pbc.boostSlowThreshold(), 0.01)) {
-                return vec3.normalize().scale(vec3.length() + requireNonNullElse(pbc.boostFactor(), 0.06));
-            } else {
-                Vec3 vec32 = minecart.getRedstoneDirection(blockPos);
-                return vec32.lengthSqr() <= (double) 0.0F ? vec3 : vec32.scale(vec3.length() + requireNonNullElse(pbc.boostSlowFactor(), 0.2));
-            }
-        } else {
-            return vec3; // this would be the vanilla result
-        }
+    public double calculateBoostSlowThreshold(double defaultValue, AbstractMinecart minecart, BlockPos blockPos) {
+        final PerBlockConfig pbc = this.getPerBlockConfig(minecart, blockPos);
+        if (pbc == null) return defaultValue;
+        return requireNonNullElse(pbc.boostSlowThreshold(), defaultValue);
+    }
+
+    public double calculateBoostFactor(double defaultValue, AbstractMinecart minecart, BlockPos blockPos) {
+        final PerBlockConfig pbc = this.getPerBlockConfig(minecart, blockPos);
+        if (pbc == null) return defaultValue;
+        return requireNonNullElse(pbc.boostFactor(), defaultValue);
+    }
+
+    public double calculateBoostSlowFactor(double defaultValue, AbstractMinecart minecart, BlockPos blockPos) {
+        final PerBlockConfig pbc = this.getPerBlockConfig(minecart, blockPos);
+        if (pbc == null) return defaultValue;
+        return requireNonNullElse(pbc.boostSlowFactor(), defaultValue);
     }
 
     public Vec3 calculateHaltTrackSpeed(NewMinecartBehavior nmb, AbstractMinecart minecart, Vec3 vec3, BlockState blockState) {
-        if (blockState.is(Blocks.POWERED_RAIL) && !(Boolean) blockState.getValue(PoweredRailBlock.POWERED)) {
-            final PerBlockConfig pbc = this.getPerBlockConfig(minecart);
-            if (pbc == null) return null;
-            return vec3.length() < requireNonNullElse(pbc.haltThreshold(), 0.03) ? Vec3.ZERO : vec3.scale(requireNonNullElse(pbc.haltFactor(), 0.5));
-        } else {
-            return vec3;
-        }
+        final PerBlockConfig pbc = this.getPerBlockConfig(minecart);
+        if (pbc == null) return null;
+        return vec3.length() < requireNonNullElse(pbc.haltThreshold(), 0.03) ? Vec3.ZERO : vec3.scale(requireNonNullElse(pbc.haltFactor(), 0.5));
     }
 
     // ===================================================================================
