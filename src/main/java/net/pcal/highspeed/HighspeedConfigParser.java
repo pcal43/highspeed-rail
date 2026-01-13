@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.pcal.highspeed.HighspeedConfig.PerBlockConfig;
 
 import java.io.IOException;
@@ -53,10 +53,10 @@ class HighspeedConfigParser {
         }
 
         // load the per-block configs
-        final ImmutableMap<ResourceLocation, PerBlockConfig> perBlockConfigs;
+        final ImmutableMap<Identifier, PerBlockConfig> perBlockConfigs;
         {
             if (configGson.blocks != null) {
-                final ImmutableMap.Builder<ResourceLocation, PerBlockConfig> pbcs = ImmutableMap.builder();
+                final ImmutableMap.Builder<Identifier, PerBlockConfig> pbcs = ImmutableMap.builder();
                 configGson.blocks.forEach(bcg -> {
                             final Collection<String> blockIds;
                             if (bcg.blockIds != null) {
@@ -67,7 +67,7 @@ class HighspeedConfigParser {
                                 throw new RuntimeException("blockIds must be set in 'blocks' configurations");
                             }
                             for (String blockId : blockIds) {
-                                pbcs.put(ResourceLocation.parse(requireNonNull(blockId, "blockIds must not be null")),
+                                pbcs.put(Identifier.parse(requireNonNull(blockId, "blockIds must not be null")),
                                          mergeConfigs(defaultConfig, createPerBlockConfig(bcg)));
                             }
                         });

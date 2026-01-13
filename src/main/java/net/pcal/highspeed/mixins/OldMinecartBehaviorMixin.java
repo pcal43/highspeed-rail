@@ -2,10 +2,10 @@ package net.pcal.highspeed.mixins;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.vehicle.OldMinecartBehavior;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.OldMinecartBehavior;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.RailShape;
@@ -92,7 +92,7 @@ public abstract class OldMinecartBehaviorMixin {
                 return currentMaxSpeed = VANILLA_MAX_SPEED;
             } else {
                 final BlockState underState = minecart.level().getBlockState(currentPos.below());
-                final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
+                final Identifier underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
                 final Integer maxSpeed = HighspeedService.getInstance().getOldMaxSpeed(
                         (OldMinecartBehavior) (Object) this, minecart, underBlockId);
                 if (maxSpeed != null) {

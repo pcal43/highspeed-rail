@@ -2,11 +2,11 @@ package net.pcal.highspeed;
 
 import java.util.Map;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record HighspeedConfig(
         PerBlockConfig defaultBlockConfig,
-        Map<ResourceLocation, PerBlockConfig> blockConfigs,
+        Map<Identifier, PerBlockConfig> blockConfigs,
         boolean isSpeedometerEnabled,
         boolean isTrueSpeedometerEnabled,
         boolean isIceBoatsEnabled,
