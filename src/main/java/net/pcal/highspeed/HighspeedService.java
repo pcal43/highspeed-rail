@@ -3,7 +3,7 @@ package net.pcal.highspeed;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,9 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
-import net.minecraft.world.entity.vehicle.OldMinecartBehavior;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.minecart.NewMinecartBehavior;
+import net.minecraft.world.entity.vehicle.minecart.OldMinecartBehavior;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.pcal.highspeed.HighspeedConfig.PerBlockConfig;
@@ -84,7 +84,7 @@ public class HighspeedService implements ModInitializer {
      *
      * FIXME this should be a Double.
      */
-    public Integer getOldMaxSpeed(OldMinecartBehavior omb, AbstractMinecart minecart, ResourceLocation blockId) {
+    public Integer getOldMaxSpeed(OldMinecartBehavior omb, AbstractMinecart minecart, Identifier blockId) {
         final PerBlockConfig pbc = this.getPerBlockConfig(minecart);
         return pbc == null ? null : pbc.oldMaxSpeed();
     }
@@ -169,7 +169,7 @@ public class HighspeedService implements ModInitializer {
     private PerBlockConfig getPerBlockConfig(AbstractMinecart minecart, BlockPos minecartPos) {
         if (this.config.blockConfigs() == null) return this.config.defaultBlockConfig();
         final BlockState underState = minecart.level().getBlockState(minecartPos.below());
-        final ResourceLocation underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
+        final Identifier underBlockId = BuiltInRegistries.BLOCK.getKey(underState.getBlock());
         final PerBlockConfig pbc = this.config.blockConfigs().get(underBlockId);
         return pbc != null ? pbc :  this.config.defaultBlockConfig();
     }
