@@ -12,6 +12,7 @@ repositories {
 	mavenCentral()
 	maven { url = 'https://maven.fabricmc.net/' }
 	maven { url = 'https://repo.spongepowered.org/maven/' }
+	maven { url = 'https://maven.nucleoid.xyz/' }
 }
 
 dependencies {
@@ -71,6 +72,7 @@ jar {
 	}
 }
 
+// Publishing configuration
 modrinth {
 	token = System.getenv("MODRINTH_TOKEN")
 	projectId = modrinth_projectId

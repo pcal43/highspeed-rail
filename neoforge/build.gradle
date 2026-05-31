@@ -14,6 +14,7 @@ repositories {
 }
 
 dependencies {
+    // common module - needed for IntelliJ to resolve the project dependency
     compileOnly project(':common')
 }
 
@@ -69,6 +70,7 @@ jar {
     }
 }
 
+// Publishing configuration
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = modrinth_projectId
