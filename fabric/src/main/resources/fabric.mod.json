@@ -18,7 +18,8 @@
     "client": ["net.pcal.highspeed.fabric.HighspeedFabricClientInitializer"]
   },
   "mixins": [
-    "highspeed-mixin.json"
+    "highspeed-mixin.json",
+    "highspeed-fabric-mixin.json"
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",

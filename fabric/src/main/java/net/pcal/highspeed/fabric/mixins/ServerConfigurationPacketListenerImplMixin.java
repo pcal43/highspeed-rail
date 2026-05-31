@@ -1,4 +1,4 @@
-package net.pcal.highspeed.mixins;
+package net.pcal.highspeed.fabric.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;

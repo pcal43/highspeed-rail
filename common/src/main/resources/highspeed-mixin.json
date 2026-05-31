@@ -8,8 +8,7 @@
     "OldMinecartBehaviorMixin",
     "NewMinecartBehaviorMixin",
     "AbstractBoatEntityMixin",
-    "MinecartBehaviorAccessor",
-    "ServerConfigurationPacketListenerImplMixin"
+    "MinecartBehaviorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
