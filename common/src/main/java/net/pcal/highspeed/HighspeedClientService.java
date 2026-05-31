@@ -1,6 +1,5 @@
 package net.pcal.highspeed;
 
-import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -10,14 +9,13 @@ import net.minecraft.world.phys.Vec3;
 
 import static java.util.Objects.requireNonNull;
 
-public class HighspeedClientService implements ClientModInitializer {
+public class HighspeedClientService {
 
     private static final int SPEEDOMETER_REFRESH_FREQUENCY = 4; // in ticks
     private int speedometerRefresh = 0;
 
-    @Override
-    public void onInitializeClient() {
-        requireNonNull(HighspeedService.getInstance()).initClientService(this);
+    public static void initialize() {
+        requireNonNull(HighspeedService.getInstance()).initClientService(new HighspeedClientService());
     }
 
     public boolean isPlayerRiding(AbstractMinecart minecart) {

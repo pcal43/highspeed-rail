@@ -1,96 +1,20 @@
 plugins {
-    id 'fabric-loom' version '1.14-SNAPSHOT'
-    id "com.modrinth.minotaur" version "2.+"
-    id 'net.darkhax.curseforgegradle' version '1.1.25'
+	id 'fabric-loom' version "${fabric_loom_version}" apply false
+	id 'net.neoforged.moddev' version "${neoforge_moddev_version}" apply false
+	id 'com.modrinth.minotaur' version "${minotaur_plugin_version}" apply false
+	id 'net.darkhax.curseforgegradle' version "${curseforgegradle_plugin_version}" apply false
 }
 
-version = project.mod_version
-group = project.maven_group
-
-repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+ext {
+	archivesBaseNameFabric = "${archives_base_name}-fabric"
+	archivesBaseNameNeoForge = "${archives_base_name}-neoforge"
 }
 
-configurations {
-        // configuration that holds jars to include in the jar
-        extraLibs
-}
+subprojects {
+	group = rootProject.maven_group
 
-dependencies {
-	// To change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+	tasks.withType(JavaCompile).configureEach {
+		it.options.release = project.java_version as Integer
+		options.encoding = "UTF-8"
 	}
 }
-
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
-}
-
-java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
-}
-
-jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archives_base_name}"}
-	}
-}
-
-
-
-// https://github.com/modrinth/minotaur
-
-// https://github.com/modrinth/minotaur
-modrinth {
-	token = System.getenv("MODRINTH_TOKEN")
-	projectId = "${project.modrinth_projectId}"
-	versionNumber = project.mod_version
-	versionType = "Release"
-	uploadFile = remapJar
-	changelog = "<p><a href='${project.github_projectUrl}/releases/tag/${project.mod_version}'>${project.github_projectUrl}/releases/tag/${project.mod_version}</a></p>"
-	gameVersions = ["${project.minecraft_version}"]
-	loaders = ["fabric"]
-	dependencies {
-		required.project "fabric-api"
-	}
-}
-
-
-import net.darkhax.curseforgegradle.TaskPublishCurseForge
-
-tasks.register('publishCurseForge', TaskPublishCurseForge) {
-	// API Key from environment or fallback
-	apiToken = System.getenv("CURSEFORGE_TOKEN") ?: 'CURSEFORGE_TOKEN NOT_SET'
-
-	// Configure the main artifact
-	// The plugin automatically detects Fabric & Java version from your Loom setup
-	def mainFile = upload(project.curseforge_projectId, remapJar)
-
-	mainFile.releaseType = "release"
-	mainFile.changelog = "${project.github_projectUrl}/releases/tag/${project.mod_version}"
-	mainFile.changelogType = "markdown"
-
-	mainFile.addGameVersion(project.minecraft_version)
-	mainFile.addModLoader("Fabric")
-
-	// Ensure remapJar is finished before this runs
-	dependsOn(remapJar)
-}
-
