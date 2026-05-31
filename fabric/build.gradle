@@ -1,0 +1,100 @@
+plugins {
+	id 'fabric-loom'
+	id 'com.modrinth.minotaur'
+	id 'net.darkhax.curseforgegradle'
+}
+
+base {
+	archivesName = "${rootProject.ext.archivesBaseNameFabric}-${project.mod_version}"
+}
+
+repositories {
+	mavenCentral()
+	maven { url = 'https://maven.fabricmc.net/' }
+	maven { url = 'https://repo.spongepowered.org/maven/' }
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+
+	compileOnly project(':common')
+}
+
+processResources {
+	inputs.property "mod_version", mod_version
+	inputs.property "minecraft_version", minecraft_version
+	inputs.property "java_version", java_version
+	inputs.property "fabric_loader_version", fabric_loader_version
+	filesMatching("fabric.mod.json") {
+		expand  "mod_version": mod_version,
+				"minecraft_version": minecraft_version,
+				"java_version": java_version,
+				"fabric_loader_version": fabric_loader_version
+	}
+}
+
+sourceSets {
+	main {
+		java { srcDir project(":common").file("src/main/java") }
+		resources { srcDir project(":common").file("src/main/resources") }
+	}
+}
+
+loom {
+	runs {
+		client {
+			client()
+			setConfigName("Fabric Client")
+			ideConfigGenerated(true)
+			runDir("run")
+		}
+		server {
+			server()
+			setConfigName("Fabric Server")
+			ideConfigGenerated(true)
+			runDir("run")
+		}
+	}
+	mods {
+		"highspeed-rail" {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${archives_base_name}" }
+	}
+}
+
+modrinth {
+	token = System.getenv("MODRINTH_TOKEN")
+	projectId = modrinth_projectId
+	versionNumber = mod_version
+	versionName = "${mod_version} (fabric)"
+	versionType = "release"
+	uploadFile = remapJar
+	changelog = "<p><a href='${github_projectUrl}/releases/tag/${mod_version}'>${github_projectUrl}/releases/tag/${mod_version}</a></p>"
+	gameVersions = [minecraft_version]
+	loaders = ["fabric"]
+	dependencies {
+		required.project "fabric-api"
+	}
+}
+
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
+tasks.register('publishCurseForge', TaskPublishCurseForge) {
+	apiToken = System.getenv("CURSEFORGE_TOKEN") ?: 'CURSEFORGE_TOKEN NOT_SET'
+	def mainFile = upload(curseforge_projectId, remapJar)
+	mainFile.releaseType = "release"
+	mainFile.changelog = "${github_projectUrl}/releases/tag/${mod_version}"
+	mainFile.changelogType = "markdown"
+	mainFile.addGameVersion(minecraft_version)
+	mainFile.addModLoader("Fabric")
+	dependsOn(remapJar)
+}

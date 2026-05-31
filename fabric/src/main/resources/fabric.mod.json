@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "highspeed-rail",
-  "version": "${version}",
+  "version": "${mod_version}",
   "name": "High-Speed Rail",
   "description": "Forget ice boats. Take the train instead.",
   "authors": ["pcal.net"],
@@ -14,17 +14,18 @@
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["net.pcal.highspeed.HighspeedService"],
-    "client": ["net.pcal.highspeed.HighspeedClientService"]
+    "main": ["net.pcal.highspeed.fabric.HighspeedFabricInitializer"],
+    "client": ["net.pcal.highspeed.fabric.HighspeedFabricClientInitializer"]
   },
   "mixins": [
-    "highspeed-mixin.json"
+    "highspeed-mixin.json",
+    "highspeed-fabric-mixin.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.9",
-    "fabric": "*",
-    "minecraft": ">=1.21.3",
-    "java": ">=21"
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": ">=${minecraft_version}",
+    "java": ">=${java_version}"
   },
   "conflicts": {}
 }

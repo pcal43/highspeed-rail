@@ -2,14 +2,13 @@
   "required": true,
   "minVersion": "0.8",
   "package": "net.pcal.highspeed.mixins",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractMinecartMixin",
     "OldMinecartBehaviorMixin",
     "NewMinecartBehaviorMixin",
     "AbstractBoatEntityMixin",
-    "MinecartBehaviorAccessor",
-    "ServerConfigurationPacketListenerImplMixin"
+    "MinecartBehaviorAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

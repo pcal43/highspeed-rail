@@ -1,0 +1,25 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+[[mixins]]
+config = "highspeed-mixin.json"
+[[mixins]]
+config = "highspeed-neoforge-mixin.json"
+[[mods]]
+modId = "highspeed_rail"
+version = "${mod_version}"
+displayName = "High-Speed Rail"
+description = "Forget ice boats. Take the train instead."
+logoFile = "icon.png"
+[[dependencies.highspeed_rail]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neoforge_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.highspeed_rail]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${minecraft_version},)"
+ordering = "NONE"
+side = "BOTH"

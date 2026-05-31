@@ -1,6 +1,5 @@
 package net.pcal.highspeed;
 
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -25,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
-public class HighspeedService implements ModInitializer {
+public class HighspeedService {
 
     // ===================================================================================
     // Singleton
@@ -40,6 +39,11 @@ public class HighspeedService implements ModInitializer {
         return requireNonNull(INSTANCE);
     }
 
+    public static void initialize() {
+        if (INSTANCE != null) return;
+        new HighspeedService().onInitialize();
+    }
+
     // ===================================================================================
     // Constants
 
@@ -48,14 +52,13 @@ public class HighspeedService implements ModInitializer {
     private static final Path CONFIG_FILE_PATH = Paths.get("config", CONFIG_FILENAME);
 
     // ===================================================================================
-    // ModInitializer implementation
+    // Initialization
 
-    @Override
-    public void onInitialize() {
+    private void onInitialize() {
         if (!CONFIG_FILE_PATH.toFile().exists()) {
             try (InputStream in = this.getClass().getClassLoader().getResourceAsStream(CONFIG_RESOURCE_NAME)) {
                 if (in == null) throw new IllegalStateException("Unable to load " + CONFIG_RESOURCE_NAME);
-                java.nio.file.Files.createDirectories(CONFIG_FILE_PATH); // dir doesn't exist on fresh install
+                java.nio.file.Files.createDirectories(CONFIG_FILE_PATH.getParent()); // dir doesn't exist on fresh install
                 java.nio.file.Files.copy(in, CONFIG_FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new RuntimeException(e);
