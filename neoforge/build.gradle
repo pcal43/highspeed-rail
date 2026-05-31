@@ -64,7 +64,7 @@ jar {
     }
     manifest {
         attributes([
-                'MixinConfigs': 'highspeed-mixin.json'
+                'MixinConfigs': 'highspeed-mixin.json,highspeed-neoforge-mixin.json'
         ])
     }
 }
