@@ -30,7 +30,7 @@ public class HighspeedClientService {
 
     public void sendPlayerMessage(String message) {
         final LocalPlayer player = requireNonNull(Minecraft.getInstance().player);
-        player.displayClientMessage(Component.literal(message), true);
+        player.sendOverlayMessage(Component.literal(message));
     }
 
     public void updateSpeedometer(final NewMinecartBehavior nmb, final AbstractMinecart minecart) {

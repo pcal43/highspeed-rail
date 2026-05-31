@@ -2,6 +2,7 @@ package net.pcal.highspeed.mixins;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.minecart.NewMinecartBehavior;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,7 +29,7 @@ public abstract class NewMinecartBehaviorMixin {
     }
 
     @Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
-    protected void getMaxSpeed(CallbackInfoReturnable<Double> cir) {
+    protected void getMaxSpeed(ServerLevel serverLevel, CallbackInfoReturnable<Double> cir) {
         final Double customMaxSpeed = HighspeedService.getInstance().getMaxSpeed(
                 (NewMinecartBehavior) (Object)this, ((MinecartBehaviorAccessor) this).getMinecart()
         );
