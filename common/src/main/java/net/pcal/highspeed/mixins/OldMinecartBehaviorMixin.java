@@ -3,6 +3,7 @@ package net.pcal.highspeed.mixins;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.minecart.OldMinecartBehavior;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
@@ -62,7 +63,7 @@ public abstract class OldMinecartBehaviorMixin {
     }
 
     @Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
-    protected void getMaxSpeed(CallbackInfoReturnable<Double> cir) {
+    protected void getMaxSpeed(ServerLevel serverLevel, CallbackInfoReturnable<Double> cir) {
         final double maxSpeed = getModifiedMaxSpeed();
         if (maxSpeed != VANILLA_MAX_SPEED) {
             cir.setReturnValue(maxSpeed);
@@ -152,4 +153,3 @@ public abstract class OldMinecartBehaviorMixin {
         client.sendPlayerMessage(display);
     }
 }
-
